@@ -98,4 +98,3 @@ export async function updateVisitorCount(shouldIncrement) {
             return 0;
         }
     }
-}
