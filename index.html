@@ -105,31 +105,29 @@
     <script src="interactives.js"></script>
 
 <script type="module">
-    import { incrementVisitorCount } from './firebase-setup.js';
+    // Firebase fonksiyonunu import ediyoruz
+    import { updateVisitorCount } from './firebase-setup.js'; 
 
     document.addEventListener('DOMContentLoaded', async () => {
         const countSpan = document.getElementById('visitor-count-span');
         
-        // 1. Session Storage Kontrolü
-        // Bu oturumda (sekme açık olduğu sürece) sayacın artırılıp artırılmadığını kontrol et
-        const IS_COUNTED_KEY = 'isVisitorCounted';
+        // Bu anahtar, tarayıcıda kalıcı olarak saklanacak (kapatılsa bile silinmez)
+        const HAS_VISITED_KEY = 'hasVisitedCybersecurity'; 
         
-        // Önce sayacı sadece gösterelim
-        let count = await incrementVisitorCount(false); // Sadece okuma modunda çağırıyoruz.
-
-        if (sessionStorage.getItem(IS_COUNTED_KEY) === null) {
-            // Eğer bu oturumda daha önce sayılmadıysa:
+        let shouldIncrement = false;
+        
+        // Local Storage kontrolü: Bu tarayıcı bu siteyi DAHA ÖNCE ziyaret etti mi?
+        if (localStorage.getItem(HAS_VISITED_KEY) === null) {
+            // İlk defa ziyaret ediliyorsa, artırılmalı
+            shouldIncrement = true;
             
-            // 2. Sayacı Gerçekten Artır
-            count = await incrementVisitorCount(true); // Artırma modunda çağır
-            
-            // 3. Oturumu İşaretle
-            sessionStorage.setItem(IS_COUNTED_KEY, 'true');
-        } else {
-            // Zaten sayıldıysa, mevcut değeri gösterelim
-            count = await incrementVisitorCount(false); // Sadece okuma modunda çağır
+            // Bayrağı kalıcı olarak işaretle
+            localStorage.setItem(HAS_VISITED_KEY, 'true');
         }
 
+        // Firebase fonksiyonunu çağır: ya artırıp yeni değeri al, ya da sadece mevcut değeri al.
+        const count = await updateVisitorCount(shouldIncrement);
+        
         // Değeri ekranda göster
         if (count !== "Hata") {
             countSpan.textContent = count;

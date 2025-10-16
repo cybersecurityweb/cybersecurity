@@ -3,22 +3,118 @@
 import { saveTestResult } from './firebase-setup.js';
 
 const quizQuestions = [
+    // Gizlilik
     {
-        question: "1. Kişisel fotoğraflarımı veya konumumu paylaşırken, bunların dijital ayak izimi oluşturduğunu ve ileride karşıma çıkabileceğini düşünüyorum.",
+        question: "1-Siber ortamda paylaştığım kişisel bilgiler konusunda temkinliyimdir.",
+      
     },
     {
-        question: "2. Kullandığım tüm çevrimiçi hesaplar için güçlü, karmaşık şifreler oluşturur ve bunları düzenli olarak değiştiririm.",
+        question: "2-Gerçek hayatta üçüncü şahıslarla paylaşmak istemediğim bilgi ve belgeleri siber ortamda da paylaşmam.",
+        
     },
     {
-        question: "3. Tanımadığım bir kaynaktan gelen ve aciliyet belirten e-postalardaki linklere tıklamadan önce daima gönderici adresini ve URL'yi kontrol ederim.",
+        question: "3-Siber ortamda paylaştığım verilerin sadece gerekli kişilerce görüntülenmesini sağlarım.",
+       
+    },
+    
+    // Kontrol/Sahiplik
+    {
+        question: "4-Hesaplarıma ait şifrelerin güvenliği konusunda dikkatliyim.",
+     
     },
     {
-        question: "4. İnternetteki bir haberin veya bilginin doğru olup olmadığını anlamak için birden fazla güvenilir kaynağı araştırırım.",
+        question: "5-Şifremi oluştururken sembol, rakam ya da büyük küçük harflerden oluşan tahmini zor bir şifre seçerim.",
+      
+    
+        question: "6-E-posta şifremin güvenliği için telefon doğrulaması hizmetini kullanırım.",
+     
     },
     {
-        question: "5. Sosyal medya veya çevrimiçi oyunlarda tanıştığım kişisel bilgilerimi paylaşmaktan veya onlarla özel konuşmalar yapmaktan kaçınırım.",
+        question: "7-Cevabını hatırlayacağım bir güvenlik sorusu seçmeye özen gösteririm.",
+      
+    },
+    {
+        question: "8-Kredi kartı bilgilerimin kaydedilmemiş olmasına dikkat ederim.",
+      
+    },
+    
+    // Bütünlük
+    {
+        question: "9-Siber ortamda veri saklamak güvenli değildir.",
+     
+    },
+    {
+        question: "10-Siber ortamda sakladığım bilgi ve belgeler kaybolabilir ya da silinebilir.",
+       
+    },
+    {
+        question: "11-Siber ortamda veri paylaşımı yapmak herhangi bir risk içermez.",
+       
+    },
+    {
+        question: "12-Siber ortamda saklanan bilgi ve belgelere üçüncü şahısların erişme olasılığı vardır.",
+      
+    },
+    
+    // Gerçeklik
+    {
+        question: "13-Tanımadığım kişilerden gelen e-postalardaki linkleri ve eklentileri açarım.",
+      
+    },
+    {
+        question: "14-Girdiğim web sitesinin güvenlik sertifikası olmadığı yönünde bildirim gelse de kullanmaya devam ederim.",
+      
+    },
+    {
+        question: "15-E-postama gelen istenmeyen (spam) postaları açtığım olmuştur.",
+      
+    },
+    {
+        question: "16-E-postama gelen müşteri edinme/oltalama amaçlı postaları açtığım olmuştur.",
+   
+    },
+    {
+        question: "17-Belirsiz kaynaklardan gelen bağlantıları (linkleri) ve dosyaları açtığım olmuştur.",
+     
+  
+    },
+    
+    // Erişilebilirlik
+    {
+        question: "18-Cihazımda güncel bir anti virüs programı var.",
+ 
+    },
+    {
+        question: "19-Cihazımı düzenli olarak anti virüs programı ile taratırım.",
+
+    },
+    {
+        question: "20-Cihazıma kurulu gelen güvenlik duvarı açık.",
+  
+    },
+    {
+        question: "21-İnternetten indirdiğim dosyaları cihazımda yüklü anti virüs programı olmasa da açarım.",
+
+    },
+
+    // Fayda
+    {
+        question: "22-Siber ortamda sosyal medya uygulamalarını bilgi paylaşımı için kullanırım.",
+
+    },
+    {
+        question: "23-Günlük hayatta karşılaştığım problemleri çözmek için siber ortamı yaygın olarak kullanırım.",
+
+    },
+    {
+        question: "24-Siber ortamda sunulan hizmetlerden bilgi yönetimi (bilgiyi elde etmek, saklamak, paylaşmak ve kullanmak) için faydalanırım.",
+
+        
     }
 ];
+
+// Bu diziyi projenizdeki mevcut quizQuestions değişkeniyle DEĞİŞTİRİN.
+// Fonksiyonlar ve diğer kodlar aynı kalmalıdır.
 
 // YENİ CEVAP SEÇENEKLERİ (7'li Ölçek)
 const answerOptions = [
