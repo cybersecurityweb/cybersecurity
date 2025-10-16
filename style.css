@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 /* Genel Ayarlar ve Arka Plan */
 body {
     font-family: 'Poppins', sans-serif;
@@ -1037,7 +1037,7 @@ body {
     /* Mouse üzerine gelince arka planı doldur */
     background-color: #a0a0ff;
     color: #1a1a1a; /* Koyu renk tema için yazı rengini koyu yap */
-=======
+}
 /* Genel Ayarlar ve Arka Plan */
 body {
     font-family: 'Poppins', sans-serif;
@@ -2076,5 +2076,5 @@ body {
     /* Mouse üzerine gelince arka planı doldur */
     background-color: #a0a0ff;
     color: #1a1a1a; /* Koyu renk tema için yazı rengini koyu yap */
->>>>>>> 89b5b77 (Son sayaç ve quiz düzeltmeleri.)
+
 }
