@@ -87,7 +87,8 @@ export async function updateVisitorCount(shouldIncrement) {
             console.error("Sayaç güncelleme hatası:", e);
             return "Hata";
         }
-    } else {
+    } 
+    else {
         // Sadece okuma modu
         try {
             const docSnap = await getDoc(counterRef);
