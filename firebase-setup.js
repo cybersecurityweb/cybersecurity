@@ -66,9 +66,11 @@ import { doc, getDoc, setDoc, increment, runTransaction } from 'https://www.gsta
  * Sayacı koşullu olarak bir artırır ve güncel değeri döndürür.
  * @param {boolean} shouldIncrement - True ise artır, False ise sadece mevcut değeri oku.
  */
+// firebase-setup.js dosyasındaki updateVisitorCount fonksiyonunun DOĞRU HALİ
+// Lütfen buradaki açılış ve kapanış parantezlerinin ({} ) konumuna dikkat edin.
+
 export async function updateVisitorCount(shouldIncrement) {
-    // ... (Fonksiyonun tüm içeriği burada kalacak)
-}
+    // Tüm kod, bu açılış parantezi { ve en alttaki kapanış parantezi } arasına GİRMELİDİR.
     const counterRef = doc(db, "meta", "visitor_count");
 
     if (shouldIncrement) {
@@ -99,3 +101,4 @@ export async function updateVisitorCount(shouldIncrement) {
             return 0;
         }
     }
+} // <-- Fonksiyonun kapanışı BURADA OLMALIDIR.
