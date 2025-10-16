@@ -1,5 +1,7 @@
 // quiz.js dosyasının YENİ içeriği (Ana Klasöre Yüklenecek)
 
+import { saveTestResult } from './firebase-setup.js';
+
 const quizQuestions = [
     {
         question: "1. Kişisel fotoğraflarımı veya konumumu paylaşırken, bunların dijital ayak izimi oluşturduğunu ve ileride karşıma çıkabileceğini düşünüyorum.",
@@ -105,7 +107,9 @@ function prevQuestion() {
     }
 }
 
-function submitQuiz() {
+// quiz.js içindeki submitQuiz fonksiyonunun YENİ HALİ
+
+async function submitQuiz() {
     const totalQuestions = quizQuestions.length;
     const answeredCount = Object.keys(userAnswers).length;
 
@@ -118,11 +122,19 @@ function submitQuiz() {
     for (const key in userAnswers) {
         totalScore += parseInt(userAnswers[key]);
     }
+
+    // --- YENİ ADIM: Test Tipini Belirleme ve Veriyi Kaydetme ---
+    // NOT: Basit tutmak için her zaman "post" (Son Test) olarak kaydederiz, 
+    // ancak gerçek uygulamada ön testte mi son testte mi olunduğu bilinmelidir.
+    const testType = "post"; 
     
+    const saveSuccess = await saveTestResult(testType, userAnswers, totalScore);
+    // --- YENİ ADIM SONU ---
+
     questionContainer.innerHTML = `
         <h2>Test Tamamlandı!</h2>
         <p>Tüm soruları cevapladınız. ${totalQuestions} sorudan toplam puanınız: ${totalScore}.</p>
-        <p>Projeniz başarılı bir şekilde tamamlanmıştır!</p>
+        ${saveSuccess ? '<p style="color:#FFD700;">Sonuçlarınız başarıyla kaydedildi! Admin paneli için istatistikler toplanıyor.</p>' : '<p style="color:red;">Kayıt başarısız oldu. Lütfen tekrar deneyin.</p>'}
         <a href="index.html" class="action-button" style="margin-top: 20px;">Ana Sayfaya Dön</a>
     `;
     prevButton.style.display = 'none';

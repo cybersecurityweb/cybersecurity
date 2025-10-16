@@ -954,3 +954,86 @@ body {
 .quiz-navigation .action-button:hover:not(:disabled) {
     opacity: 0.9;
 }
+/* --- YENİ ADMIN LİNKİ VE KONUMLANDIRMA STİLİ --- */
+
+/* 1. Admin Linki Stilini Ayarlama */
+.admin-link {
+    color: #999 !important; /* Daha sade bir gri ton */
+    background-color: transparent !important;
+    font-size: 0.8rem; /* Oldukça küçük font */
+    font-weight: 500;
+    padding: 5px 10px;
+    border: none;
+    text-transform: uppercase;
+    transition: color 0.3s;
+}
+
+.admin-link:hover {
+    color: #00BFFF !important; /* Mouse gelince mavi yap */
+}
+
+/* 2. KONUMLANDIRMA: Linki En Sağa İtme */
+/* Bu stil, Admin linkinin diğer linklerden hemen sonra değil, en sağda başlamasını sağlar. */
+/* index.html ve test.html'deki admin linki için uyguluyoruz. */
+.nav-links li:last-child {
+    margin-left: auto; 
+}
+/* --- ADMIN PANELİ STİLLERİ --- */
+
+.admin-panel-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #222;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.admin-panel-container input[type="email"],
+.admin-panel-container input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    box-sizing: border-box; 
+}
+
+#stats-panel h2 {
+    color: #FFD700;
+    margin-top: 0;
+}
+
+#stats-panel p {
+    font-size: 1.1rem;
+    padding: 5px 0;
+}
+/* --- YENİ EKLENEN ALT BUTON STİLLERİ (Tüm Senaryo Sayfalarının Altı İçin) --- */
+
+.footer-navigation {
+    text-align: center; /* Butonu ortala */
+    padding: 30px 0; /* Üstten ve alttan boşluk bırak */
+    margin-top: 50px; /* İçerikle arasında boşluk bırak */
+    border-top: 1px solid #333; /* Hafif bir ayırıcı çizgi */
+}
+
+.back-to-home-button {
+    /* Genel buton görünümü */
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: transparent; /* Arka planı şeffaf yap */
+    color: #a0a0ff; /* Açık mor veya mavi tonu */
+    text-decoration: none; /* Alt çizgiyi kaldır */
+    border: 2px solid #a0a0ff; /* Mor/mavi çerçeve */
+    border-radius: 8px; /* Hafif yuvarlatılmış köşeler */
+    font-size: 1.1rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.back-to-home-button:hover {
+    /* Mouse üzerine gelince arka planı doldur */
+    background-color: #a0a0ff;
+    color: #1a1a1a; /* Koyu renk tema için yazı rengini koyu yap */
+}
