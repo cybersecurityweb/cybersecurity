@@ -52,32 +52,38 @@ import { doc, getDoc, setDoc, increment, runTransaction } from 'https://www.gsta
  * Sayacı bir artırır ve güncel değeri döndürür.
  * (Firestore Transaction kullanarak veri tutarlılığını sağlar)
  */
-export async function incrementVisitorCount() {
+// firebase-setup.js dosyasındaki incrementVisitorCount fonksiyonunun YENİ HALİ
+
+/**
+ * Sayacı koşullu olarak bir artırır ve güncel değeri döndürür.
+ * @param {boolean} shouldIncrement - True ise artır, False ise sadece mevcut değeri oku.
+ */
+export async function incrementVisitorCount(shouldIncrement) {
     const counterRef = doc(db, "meta", "visitor_count");
 
-    try {
-        const newCount = await runTransaction(db, async (transaction) => {
-            const counterDoc = await transaction.get(counterRef);
-
-            if (!counterDoc.exists()) {
-                // Eğer sayaç daha önce hiç oluşturulmamışsa, 1 olarak başlat
-                transaction.set(counterRef, { count: 1 });
-                return 1;
-            } else {
-                // Mevcut değeri al ve 1 artır
-                const currentCount = counterDoc.data().count;
+    if (shouldIncrement) {
+        try {
+            const newCount = await runTransaction(db, async (transaction) => {
+                const counterDoc = await transaction.get(counterRef);
+                const currentCount = counterDoc.exists() ? counterDoc.data().count : 0;
                 const updatedCount = currentCount + 1;
-                transaction.update(counterRef, { count: updatedCount });
+                
+                transaction.set(counterRef, { count: updatedCount });
                 return updatedCount;
-            }
-        });
-
-        console.log("Ziyaretçi Sayısı Başarıyla Güncellendi:", newCount);
-        return newCount;
-
-    } catch (e) {
-        console.error("Sayaç güncelleme hatası:", e);
-        // Hata durumunda bile bir sayı dön ki site çökmesin
-        return "Hata"; 
+            });
+            return newCount;
+        } catch (e) {
+            console.error("Sayaç güncelleme hatası:", e);
+            return "Hata";
+        }
+    } else {
+        // Sadece okuma modu
+        try {
+            const docSnap = await getDoc(counterRef);
+            return docSnap.exists() ? docSnap.data().count : 0;
+        } catch (e) {
+            console.error("Sayaç okuma hatası:", e);
+            return "Hata";
+        }
     }
 }

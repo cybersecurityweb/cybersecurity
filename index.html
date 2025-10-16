@@ -104,16 +104,32 @@
     <script src="client.js"></script>
     <script src="interactives.js"></script>
 
-    <script type="module">
-    // Firebase fonksiyonunu import ediyoruz
+<script type="module">
     import { incrementVisitorCount } from './firebase-setup.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
         const countSpan = document.getElementById('visitor-count-span');
         
-        // Sayacı artır ve güncel değeri al
-        const count = await incrementVisitorCount();
+        // 1. Session Storage Kontrolü
+        // Bu oturumda (sekme açık olduğu sürece) sayacın artırılıp artırılmadığını kontrol et
+        const IS_COUNTED_KEY = 'isVisitorCounted';
         
+        // Önce sayacı sadece gösterelim
+        let count = await incrementVisitorCount(false); // Sadece okuma modunda çağırıyoruz.
+
+        if (sessionStorage.getItem(IS_COUNTED_KEY) === null) {
+            // Eğer bu oturumda daha önce sayılmadıysa:
+            
+            // 2. Sayacı Gerçekten Artır
+            count = await incrementVisitorCount(true); // Artırma modunda çağır
+            
+            // 3. Oturumu İşaretle
+            sessionStorage.setItem(IS_COUNTED_KEY, 'true');
+        } else {
+            // Zaten sayıldıysa, mevcut değeri gösterelim
+            count = await incrementVisitorCount(false); // Sadece okuma modunda çağır
+        }
+
         // Değeri ekranda göster
         if (count !== "Hata") {
             countSpan.textContent = count;
