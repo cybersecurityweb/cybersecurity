@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilinçli Kullanım ve Dijital Etik</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-background">
+    <canvas id="neon-lines"></canvas>
+    <div class="container scenario-page">
+        <header class="page-header">
+            
+            <h1>Bilinçli Kullanım</h1>
+            <p>Dijital dünyada etik kurallar, zaman yönetimi ve sağlıklı çevrimiçi etkileşimler hakkında bilgi edinin.</p>
+            
+            <div class="header-completion-section">
+                <a href="index.html" class="start-button">Ana Sayfaya Dön ve Devam Et</a>
+            </div>
+        </header>
+
+        <section class="scenario-content detail-content">
+            
+            <h2>Dijital Vatandaş Olmak</h2>
+            <p>Bilinçli kullanım, interneti sadece güvenli değil, aynı zamanda etik, saygılı ve dengeli bir şekilde kullanmak demektir. Çocuklarımızın çevrimiçi davranışlarının, gerçek dünyadaki davranışlarından farksız olduğunu anlamaları önemlidir.</p>
+
+            <div class="highlight-box privacy-settings">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <h3>Adım 1: Siber Zorbalığa Hayır</h3>
+                <p>İnternette kimseyi rahatsız etmemeyi, küçümsememeyi veya tehdit etmemeyi öğretin. Siber zorbalık hem etik dışıdır hem de yasal sonuçları vardır. Zorbalıkla karşılaşan çocukların hemen size haber vermesi gerektiğini vurgulayın.</p>
+            </div>
+            
+            <div class="highlight-box private-info">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <h3>Adım 2: Çevrimiçi Denge</h3>
+                <p>Ekran süresi ve gerçek hayat arasındaki dengeyi kurmalarına yardımcı olun. Yemek saatleri, yatma saatleri veya ders çalışma saatlerinde cihazların kapatılması gibi aile kuralları belirleyin.</p>
+            </div>
+
+            <div class="highlight-box communication">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#32CD32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                </div>
+                <h3>Adım 3: İtibar ve Ayak İzi</h3>
+                <p>İnternette yaptıkları her şeyin bir iz bıraktığını ve bu izlerin gelecekteki eğitim/iş hayatlarını etkileyebileceğini anlatın. Paylaşmadan önce, **"Bu paylaşımı ileride görmek ister miyim?"** diye sormalarını teşvik edin.</p>
+            </div>
+            <div id="cyber-bullying-response" class="interactive-module" style="margin-top: 50px;">
+    <h2><span class="highlight-text" style="color: #e74c3c;">🛑 Siber Zorbalık Yanıtı</span></h2>
+    <p style="text-align: center; color: #ccc;">Çocuğunuz çevrimiçi bir oyunda/platformda zorbalığa uğradı. Aşağıdaki tepkilerden hangisi en uygunudur?</p>
+
+    <div class="bullying-scenario-box">
+        <h3 class="scenario-title" style="color: #e74c3c;">MESAJ: "Seninle oynamak istemiyoruz. Çok kötüsün. Oyundan silin!"</h3>
+        
+        <div class="option-buttons-container">
+            <button class="bullying-button" data-choice="A">A) Hemen yanıt verip, karşı tarafın ne kadar haksız olduğunu anlatmaya çalışmak.</button>
+            <button class="bullying-button" data-choice="B">B) Mesajı görmezden gelmek, ekran görüntüsü almak, kişiyi engellemek ve bir büyüğe haber vermek.</button>
+            <button class="bullying-button" data-choice="C) Hesabı tamamen kapatmak ve bir daha oynamamak.</button>
+        </div>
+    </div>
+    
+    <div id="bullying-feedback" class="feedback-box" style="display: none;">
+        </div>
+</div>
+        </section>
+
+    </div>
+    <script src="neon_lines.js"></script>
+    <script src="client.js"></script>
+    <script src="interactives.js"></script>
+</body>
+</html>
