@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -79,4 +80,87 @@
     <script src="client.js"></script>
     <script src="interactives.js"></script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veri Bütünlüğü</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-background">
+    <canvas id="neon-lines"></canvas>
+    <div class="container scenario-page">
+        <header class="page-header">
+            
+            <h1>Veri Bütünlüğü</h1>
+            <p>Çocuklarınızın dijital çalışmalarını, fotoğraflarını ve önemli dosyalarını kaybetmeye karşı nasıl koruyacağınızı öğrenin.</p>
+            
+            <div class="header-completion-section">
+                <a href="index.html" class="start-button">Ana Sayfaya Dön ve Devam Et</a>
+            </div>
+        </header>
+
+        <section class="scenario-content detail-content">
+            
+            <h2>Verilerinizi Kaybetmeyin: Yedekleme Stratejileri</h2>
+            <p>Dijital verilerimiz, bir cihaz arızası, virüs saldırısı veya yanlışlıkla silme durumunda aniden kaybolabilir. Veri bütünlüğü, bu tür risklere karşı bilgilerin güvenliğini, doğruluğunu ve değişmeden kalmasını sağlamaktır.</p>
+
+            <div class="highlight-box privacy-settings">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload-cloud"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+                </div>
+                <h3>Adım 1: 3-2-1 Yedekleme Kuralı</h3>
+                <p>Önemli verileri **üç farklı kopya** halinde, **iki farklı ortamda** (örn: dahili disk ve harici disk) ve **bir kopyayı çevrimdışı** (örn: bulut depolama) tutmayı öğretin. Bu, en güvenli yedekleme yöntemidir.</p>
+            </div>
+            
+            <div class="highlight-box private-info">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-cloud-off"><path d="M22.61 16.95A5 5 0 0 0 18 9h-1.26a8 8 0 0 0-7.01-1.5M1.01 6.95A8 8 0 0 0 10.99 18h9.32"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </div>
+                <h3>Adım 2: Güvenilir Bulut Hizmetleri</h3>
+                <p>Yüksek güvenlik ve şifreleme sunan, bilinen bulut depolama hizmetlerini kullanın. Bu hizmetlerin de şifrelerini güçlü tutarak verilere yetkisiz erişimi engelleyin.</p>
+            </div>
+
+            <div class="highlight-box communication">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#32CD32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3>Adım 3: Savunma Hattı: Antivirüs</h3>
+                <p>Verilerinizi bozmaya veya şifrelemeye çalışan zararlı yazılımlara karşı, cihazlarda güncel ve lisanslı bir antivirüs programı bulundurun. Bilinmeyen e-posta eklerini açmamayı kural edinin.</p>
+            </div>
+            <div id="backup-decision" class="interactive-module" style="margin-top: 50px;">
+    <h2><span class="highlight-text" style="color: #00BFFF;">💾 Yedekleme Karar Ağacı</span></h2>
+    <p style="text-align: center; color: #ccc;">Aşağıdaki senaryoda hangi yedekleme kuralını (3-2-1) ihlal ettiğinizi tespit edin ve verileri kurtarıp kurtaramayacağınızı görün.</p>
+
+    <div class="decision-scenario-box">
+        <h3 class="scenario-title">SENARYO: Virüs Saldırısı</h3>
+        <p class="scenario-text">Oğlunuzun bilgisayarı bir fidye yazılımı (ransomware) virüsü ile enfekte oldu. Tüm dosyaları şifrelendi.</p>
+        
+        <p class="question-text">Soru: Verilerinizi nasıl yedeklemiştiniz?</p>
+        
+        <div class="option-buttons-container">
+            <button class="decision-button" data-choice="A">A) Tek bir harici diske yedekledim. Disk, virüs bulaşmasın diye hep bilgisayara bağlıydı.</button>
+            <button class="decision-button" data-choice="B">B) Hem harici diske hem de bulut hesabına yedekledim. Harici diski işim bitince hemen ayırdım.</button>
+            <button class="decision-button" data-choice="C">C) Sadece Google Drive'a yedekledim. Başka kopyam yok.</button>
+        </div>
+    </div>
+    <div class="footer-navigation">
+    <a href="index.html" class="back-to-home-button">
+        ← Ana Sayfaya Dön
+    </a>
+</div>
+    <div id="decision-feedback" class="feedback-box" style="display: none;">
+        </div>
+</div>
+        </section>
+
+    </div>
+    <script src="neon_lines.js"></script>
+    <script src="client.js"></script>
+    <script src="interactives.js"></script>
+</body>
+>>>>>>> 89b5b77 (Son sayaç ve quiz düzeltmeleri.)
 </html>

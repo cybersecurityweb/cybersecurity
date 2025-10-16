@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -87,4 +88,95 @@
     <script src="client.js"></script>
     <script src="interactives.js"></script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şifreler ve Hesap Güvenliği</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-background">
+    <canvas id="neon-lines"></canvas>
+    <div class="container scenario-page">
+        <header class="page-header">
+            
+            
+            <h1>Şifreler</h1>
+            <p>Hesap güvenliğini sağlamak ve siber hırsızlığı önlemek için güçlü parola stratejilerini öğrenin.</p>
+            
+            <div class="header-completion-section">
+                <a href="index.html" class="start-button">Ana Sayfaya Dön ve Devam Et</a>
+            </div>
+
+        </header>
+
+        <section class="scenario-content detail-content">
+            
+            <h2>Siber Kapıları Güvenceye Almak</h2>
+            <p>Çevrimiçi hesaplarımızın her biri birer dijital kapıdır. Bu kapıların anahtarı da şifrelerimizdir. Zayıf bir şifre, hem kişisel verilerimizi hem de cihazlarımızın güvenliğini tehlikeye atar. Bu senaryoda, güçlü şifreleme alışkanlıklarını öğreneceğiz.</p>
+
+            <div class="highlight-box privacy-settings">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/200ə/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-key"><path d="M21 2l-6.5 6.5a1.5 1.5 0 0 0 0 2.12c.56.56 1.48.56 2.04 0L21 4"/><path d="M11 11l6.5-6.5"/><path d="M10 20l4-4"/><path d="M20 12l-8 8-4-4-8-8-4-4"/></svg>
+                </div>
+                <h3>Adım 1: Süper Güçlü Şifreler</h3>
+                <p>Şifrelerin en az **12 karakterden** oluşmalı ve mutlaka büyük/küçük harf, rakam ve özel karakterler (`!@#$`) içermelidir. Kolay tahmin edilebilen (doğum tarihi, isim) şifrelerden kaçınılmalıdır.</p>
+            </div>
+            
+            <div class="highlight-box private-info">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-repeat"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                </div>
+                <h3>Adım 2: Tekrarı Önle!</h3>
+                <p>Bir e-posta hesabının şifresini, bir oyun hesabında veya sosyal medyada **ASLA** kullanmayın. Bir hesap çalınsa bile, diğer tüm hesaplar güvende kalır. Şifre yöneticisi kullanmak bu durumu kolaylaştırır.</p>
+            </div>
+
+            <div class="highlight-box communication">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#32CD32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <h3>Adım 3: İki Adımlı Koruma (2FA)</h3>
+                <p>Mümkün olan her yerde **İki Aşamalı Doğrulama (2FA)** özelliğini etkinleştirin. Bu, şifrenizi bilen birinin bile, telefona gelen ek bir kod olmadan hesabınıza erişemeyeceği anlamına gelir.</p>
+            </div>
+            <div id="password-tester" class="interactive-module" style="margin-top: 50px;">
+    <h2><span class="highlight-text" style="color: #FFD700;">🔑 Şifre Gücü Denetleyicisi</span></h2>
+    <p style="text-align: center; color: #ccc;">Güçlü bir şifre oluşturma ipuçlarımızı uygulayarak aşağıya bir şifre yazın ve ne kadar güvenli olduğunu görün.</p>
+
+    <div class="password-input-container">
+        <input type="password" id="password-input" placeholder="Şifrenizi Buraya Girin" />
+        <span id="toggle-password" class="toggle-password-icon">👁️</span>
+    </div>
+    
+    <div id="password-strength-meter">
+        <div id="strength-bar" class="strength-0"></div>
+    </div>
+
+    <div id="strength-feedback" class="feedback-box">
+        <p>Şifreniz: <span id="password-text">...</span></p>
+        <p>Güç Seviyesi: <span id="strength-level">Çok Zayıf</span></p>
+        <ul id="password-checklist">
+            <li id="check-length">En az 12 karakter olmalı</li>
+            <li id="check-upper">Büyük harf (A-Z) içermeli</li>
+            <li id="check-lower">Küçük harf (a-z) içermeli</li>
+            <li id="check-number">Rakam (0-9) içermeli</li>
+            <li id="check-symbol">Özel karakter (!@#) içermeli</li>
+        </ul>
+    </div>
+</div>
+<div class="footer-navigation">
+    <a href="index.html" class="back-to-home-button">
+        ← Ana Sayfaya Dön
+    </a>
+</div>
+        </section>
+
+        </div>
+    <script src="neon_lines.js"></script>
+    <script src="client.js"></script>
+    <script src="interactives.js"></script>
+</body>
+>>>>>>> 89b5b77 (Son sayaç ve quiz düzeltmeleri.)
 </html>
