@@ -95,11 +95,7 @@
     <li class="admin-position"><a href="admin.html" class="admin-link">Admin</a></li>
 </ul>
 <div class="counter-display">
-    <img 
-        src="https://hits.sh/github/cybersecurityweb/cybersecurity.svg?style=flat&label=ziyaret&color=00BFFF&labelColor=1e1e1e" 
-        alt="Ziyaretçi Sayacı"
-        id="visitor-counter-image"
-    />
+    <p class="visitor-count-text">Toplam Ziyaret: <span id="visitor-count-span">Yükleniyor...</span></p>
 </div>
 <p class="visitor-count-text">kaç kez ziyaret edildiğini gösterir.</p>
     </div>
@@ -107,5 +103,24 @@
     <script src="neon_lines.js"></script>
     <script src="client.js"></script>
     <script src="interactives.js"></script>
+
+    <script type="module">
+    // Firebase fonksiyonunu import ediyoruz
+    import { incrementVisitorCount } from './firebase-setup.js';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const countSpan = document.getElementById('visitor-count-span');
+        
+        // Sayacı artır ve güncel değeri al
+        const count = await incrementVisitorCount();
+        
+        // Değeri ekranda göster
+        if (count !== "Hata") {
+            countSpan.textContent = count;
+        } else {
+            countSpan.textContent = "Bağlantı Hatası";
+        }
+    });
+</script>
 </body>
 </html>

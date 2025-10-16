@@ -44,3 +44,40 @@ export async function saveTestResult(testType, answers, score) {
         return false;
     }
 }
+// firebase-setup.js dosyasının EN ALTINA eklenecek KOD
+
+import { doc, getDoc, setDoc, increment, runTransaction } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
+
+/**
+ * Sayacı bir artırır ve güncel değeri döndürür.
+ * (Firestore Transaction kullanarak veri tutarlılığını sağlar)
+ */
+export async function incrementVisitorCount() {
+    const counterRef = doc(db, "meta", "visitor_count");
+
+    try {
+        const newCount = await runTransaction(db, async (transaction) => {
+            const counterDoc = await transaction.get(counterRef);
+
+            if (!counterDoc.exists()) {
+                // Eğer sayaç daha önce hiç oluşturulmamışsa, 1 olarak başlat
+                transaction.set(counterRef, { count: 1 });
+                return 1;
+            } else {
+                // Mevcut değeri al ve 1 artır
+                const currentCount = counterDoc.data().count;
+                const updatedCount = currentCount + 1;
+                transaction.update(counterRef, { count: updatedCount });
+                return updatedCount;
+            }
+        });
+
+        console.log("Ziyaretçi Sayısı Başarıyla Güncellendi:", newCount);
+        return newCount;
+
+    } catch (e) {
+        console.error("Sayaç güncelleme hatası:", e);
+        // Hata durumunda bile bir sayı dön ki site çökmesin
+        return "Hata"; 
+    }
+}
