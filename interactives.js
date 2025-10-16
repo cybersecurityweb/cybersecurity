@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 document.addEventListener('DOMContentLoaded', () => {
     // Sadece Phishing simülatörü olan sayfada çalıştır
     const simulatorContainer = document.getElementById('phishing-simulator');
@@ -450,7 +450,7 @@ if (profileDetector) {
         feedbackBox.innerHTML = feedbackHTML;
         feedbackBox.style.display = 'block';
     });
-=======
+
 document.addEventListener('DOMContentLoaded', () => {
     // Sadece Phishing simülatörü olan sayfada çalıştır
     const simulatorContainer = document.getElementById('phishing-simulator');
@@ -902,5 +902,5 @@ if (profileDetector) {
         feedbackBox.innerHTML = feedbackHTML;
         feedbackBox.style.display = 'block';
     });
->>>>>>> 89b5b77 (Son sayaç ve quiz düzeltmeleri.)
+}
 }
