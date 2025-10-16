@@ -58,10 +58,21 @@ import { doc, getDoc, setDoc, increment, runTransaction } from 'https://www.gsta
  * Sayacı koşullu olarak bir artırır ve güncel değeri döndürür.
  * @param {boolean} shouldIncrement - True ise artır, False ise sadece mevcut değeri oku.
  */
-export async function incrementVisitorCount(shouldIncrement) {
+// firebase-setup.js dosyasındaki fonksiyonun YENİ HALİ
+
+// firebase-setup.js dosyasında bulun ve bu şekilde DÜZELTİN:
+
+/**
+ * Sayacı koşullu olarak bir artırır ve güncel değeri döndürür.
+ * @param {boolean} shouldIncrement - True ise artır, False ise sadece mevcut değeri oku.
+ */
+export async function updateVisitorCount(shouldIncrement) {
+    // ... (Fonksiyonun tüm içeriği burada kalacak)
+}
     const counterRef = doc(db, "meta", "visitor_count");
 
     if (shouldIncrement) {
+        // Artırma modu: Transaction kullanarak atomik artırma yap
         try {
             const newCount = await runTransaction(db, async (transaction) => {
                 const counterDoc = await transaction.get(counterRef);
@@ -82,8 +93,9 @@ export async function incrementVisitorCount(shouldIncrement) {
             const docSnap = await getDoc(counterRef);
             return docSnap.exists() ? docSnap.data().count : 0;
         } catch (e) {
+            // Hata durumunda bile 0 göster
             console.error("Sayaç okuma hatası:", e);
-            return "Hata";
+            return 0;
         }
     }
 }
