@@ -2078,3 +2078,101 @@ body {
     color: #1a1a1a; /* Koyu renk tema için yazı rengini koyu yap */
 
 }
+/* ======================================= */
+/* ====== MOBİL UYUMLULUK (RESPONSIVE DESIGN) ====== */
+/* ======================================= */
+
+@media (max-width: 768px) {
+    
+    /* Genel Ayarlar ve İçerik Konteyneri */
+    body {
+        /* Sayfanın yanlardan taşmasını önler */
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    /* Başlık ve Ana Menü */
+    header {
+        flex-direction: column; /* Logoyu ve menüyü alt alta sıralar */
+        align-items: flex-start; /* Başlık sola yaslanır */
+        padding: 15px 10px;
+        height: auto; /* Yüksekliği içeriğe göre ayarlar */
+    }
+
+    nav ul {
+        flex-direction: column; /* Menü öğelerini alt alta sıralar */
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    nav ul li {
+        width: 100%;
+        margin: 5px 0;
+        text-align: left;
+    }
+
+    nav ul li a {
+        display: block;
+        padding: 10px 5px; /* Tıklama alanını büyütür */
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.05); /* Arkaplanı hafif belirginleştirir */
+    }
+
+    /* Ana İçerik Alanı */
+    main {
+        padding: 10px;
+        /* Mobil cihazlarda maksimum genişliği sınırlar */
+        max-width: 100%; 
+        margin: 10px auto;
+    }
+
+    /* Sayaç Görüntüsü (Counter Display) */
+    .counter-display {
+        text-align: center;
+        padding: 5px;
+        font-size: 0.9em; /* Sayaç metnini küçültür */
+    }
+
+    /* Quiz ve Admin Paneli Ayarları */
+
+    /* Soru ve Cevap Alanları */
+    #question-container h3 {
+        font-size: 1.1em; /* Soru metnini küçültür */
+        padding: 10px;
+    }
+
+    /* Radyo butonu etiketleri */
+    .answer-label {
+        font-size: 0.95em; /* Cevap seçeneklerini küçültür */
+        padding: 10px 5px;
+        /* Alt alta daha iyi görünmesi için */
+        display: block; 
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    /* Butonları Genişletme */
+    #prev-btn, 
+    #next-btn, 
+    #submit-btn,
+    .action-button {
+        width: 48%; /* Butonları yan yana iki tane sığacak şekilde ayarlar */
+        padding: 12px 0;
+        margin: 5px 1%; /* Aralarına boşluk bırakır */
+        font-size: 1em;
+        display: inline-block;
+    }
+    
+    /* Admin Formu */
+    #login-form input[type="email"],
+    #login-form input[type="password"] {
+        width: 100%; /* Giriş alanlarını tam genişlik yapar */
+        margin-bottom: 10px;
+    }
+
+    /* Footer (Sayfa Altı) */
+    footer {
+        font-size: 0.8em;
+        padding: 10px 0;
+    }
+}
