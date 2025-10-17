@@ -7,7 +7,22 @@ const canvas = document.getElementById('neon-canvas');
 // const canvas = document.getElementById('neon-lines'); olarak bırakın.
 
 // Canvas elementi bulunamazsa kodun hata vermesini engelle
-if (!canvas) {
+// neon_lines.js dosyasındaki TÜM KODU bu yapının içine alın:
+
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('neon-lines');
+    
+    // Eğer canvas elementi bulunamazsa (örneğin bazı sayfalarda yoksa)
+    if (!canvas) {
+        return; 
+    }
+    
+    // Buraya getContext('2d') ile başlayan eski neon_lines.js kodunuzun geri kalanını yapıştırın
+    const ctx = canvas.getContext('2d');
+    
+    // ... scriptin geri kalanı ...
+
+    if (!canvas) {
     console.error("Canvas elementi 'neon-canvas' veya 'neon-lines' id'si ile bulunamadı. Lütfen index.html dosyanızı kontrol edin.");
 } else {
     const ctx = canvas.getContext('2d');
@@ -125,3 +140,4 @@ if (!canvas) {
     init();
     animate();
 }
+});
