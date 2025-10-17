@@ -6,11 +6,9 @@ import { saveTestResult } from './firebase-setup.js';
 const answerOptions = [
     { text: "Kesinlikle Katılmıyorum", value: 1, isReversed: false },
     { text: "Katılmıyorum", value: 2, isReversed: false },
-    { text: "Kısmen Katılmıyorum", value: 3, isReversed: false },
-    { text: "Ne Katılıyorum Ne De Katılmıyorum", value: 4, isReversed: false },
-    { text: "Kısmen Katılıyorum", value: 5, isReversed: false },
-    { text: "Katılıyorum", value: 6, isReversed: false },
-    { text: "Kesinlikle Katılıyorum", value: 7, isReversed: false }
+    { text: "Kararsızım", value: 3, isReversed: false },
+    { text: "Katılıyorum", value: 4, isReversed: false },
+    { text: "Kesinlikle Katılıyorum", value: 5, isReversed: false },
 ];
 
 // TERS MADDELER İÇİN PUANLAMA MANTIĞI:
