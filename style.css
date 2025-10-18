@@ -2176,3 +2176,40 @@ body {
         padding: 10px 0;
     }
 }
+/* TABLET */
+@media (max-width: 992px) {
+  .grid, .cards, .sections {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .button {
+    padding: 0.8rem 1.4rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* TELEFON */
+@media (max-width: 600px) {
+  .grid, .cards, .sections {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
+
+  .button {
+    width: 100%;
+    text-align: center;
+  }
+}
