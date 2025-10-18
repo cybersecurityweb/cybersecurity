@@ -1,281 +1,95 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siber Güvenlik</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siber Güvenlik</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dark-background">
 
-    <canvas id="neon-lines"></canvas>
+    <canvas id="neon-lines"></canvas>
 
-    <div class="container">
-        <header class="main-header">
-            <h1>Daha Güvenli ve Bilgili Bir İnternet İçin Seneryoları Ziyaret Edin</h1>
-            <p>Ön test ile başlayın, ardından gizlilik, şifreler, veri bütünlüğü, gerçeklik, erişilebilirlik ve bilinçli kullanım konularında senaryoları tamamlayın.</p>
-            <a href="test.html" class="start-button">Ön Teste Hemen Başla</a>
-        </header>
+    <div class="container">
+        <header class="main-header">
+            <h1>Daha Güvenli ve Bilgili Bir İnternet İçin Seneryoları Ziyaret Edin</h1>
+            <p>Ön test ile başlayın, ardından gizlilik, şifreler, veri bütünlüğü, gerçeklik, erişilebilirlik ve bilinçli kullanım konularında senaryoları tamamlayın.</p>
+            <a href="test.html" class="start-button">Ön Teste Hemen Başla</a>
+        </header>
 
-        <section class="scenario-grid">
-            <a href="gizlilik.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield-lock"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><rect x="8" y="11" width="8" height="6" rx="1"/><path d="M11 11V8a3 3 0 0 1 6 0v3"/></svg>
-                    </div>
-                    <h3>Gizlilik</h3>
-                    <p>Kişisel bilgilerin korunması</p>
-                </div>
-            </a>
-            
-            <a href="şifreler.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-key"><path d="M21 2l-6.5 6.5a1.5 1.5 0 0 0 0 2.12c.56.56 1.48.56 2.04 0L21 4"/><path d="M11 11l6.5-6.5"/><path d="M10 20l4-4"/><path d="M20 12l-8 8-4-4-8-8-4-4"/></svg>
-                    </div>
-                    <h3>Şifreler</h3>
-                    <p>Hesap güvenliği sağlama</p>
-                </div>
-            </a>
+        <section class="scenario-grid">
+            <a href="gizlilik.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield-lock"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><rect x="8" y="11" width="8" height="6" rx="1"/><path d="M11 11V8a3 3 0 0 1 6 0v3"/></svg>
+                    </div>
+                    <h3>Gizlilik</h3>
+                    <p>Kişisel bilgilerin korunması</p>
+                </div>
+            </a>
+            
+            <a href="şifreler.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-key"><path d="M21 2l-6.5 6.5a1.5 1.5 0 0 0 0 2.12c.56.56 1.48.56 2.04 0L21 4"/><path d="M11 11l6.5-6.5"/><path d="M10 20l4-4"/><path d="M20 12l-8 8-4-4-8-8-4-4"/></svg>
+                    </div>
+                    <h3>Şifreler</h3>
+                    <p>Hesap güvenliği sağlama</p>
+                </div>
+            </a>
 
-            <a href="veri_butunlugu.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-database"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3"/></svg>
-                    </div>
-                    <h3>Veri Bütünlüğü</h3>
-                    <p>Verileri kaybetmeye karşı korunma</p>
-                </div>
-            </a>
+            <a href="veri_butunlugu.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-database"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3"/></svg>
+                    </div>
+                    <h3>Veri Bütünlüğü</h3>
+                    <p>Verileri kaybetmeye karşı korunma</p>
+                </div>
+            </a>
 
-            <a href="gerceklik.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 2.05a.5.5 0 0 1 .71-.71l.71-.71A2 2 0 0 1 12 1a2 2 0 0 1 1.29.35l.71.71a.5.5 0 0 1 .71.71l.71.71A2 2 0 0 1 18 10v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h1.29l.71-.71z"/><path d="M12 15h.01"/><path d="M12 11V7"/></svg>
-                    </div>
-                    <h3>Gerçeklik</h3>
-                    <p>Aldatıcı içerikleri tanıma</p>
-                </div>
-            </a>
+            <a href="gerceklik.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 2.05a.5.5 0 0 1 .71-.71l.71-.71A2 2 0 0 1 12 1a2 2 0 0 1 1.29.35l.71.71a.5.5 0 0 1 .71.71l.71.71A2 2 0 0 1 18 10v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h1.29l.71-.71z"/><path d="M12 15h.01"/><path d="M12 11V7"/></svg>
+                    </div>
+                    <h3>Gerçeklik</h3>
+                    <p>Aldatıcı içerikleri tanıma</p>
+                </div>
+            </a>
 
-            <a href="erisebilirlik.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-                    </div>
-                    <h3>Erişilebilirlik</h3>
-                    <p>Cihaz güvenliğini sağlama</p>
-                </div>
-            </a>
+            <a href="erisebilirlik.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                    </div>
+                    <h3>Erişilebilirlik</h3>
+                    <p>Cihaz güvenliğini sağlama</p>
+                </div>
+            </a>
 
-            <a href="bilincli_kullanim.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square-check"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><polyline points="9 10 12 13 18 7"/></svg>
-                    </div>
-                    <h3>Bilinçli Kullanım</h3>
-                    <p>Güvenli internet kullanımı</p>
-                </div>
-            </a>
-        </section>
-        
-</section>
-
-        <a href="test.html" class="scenario-card-link">
-            <div class="scenario-card final-test-card">
-                <div class="icon-box">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-8.66"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                </div>
-                <h3>Son Testi Çöz</h3>
-                <p>Bilgilerinizi test edin ve sertifikanızı alın</p>
-            </div>
-        </a>
-<ul class="nav-links">
-    <li class="admin-position"><a href="admin.html" class="admin-link">Admin</a></li>
-</ul>
-<div class="counter-display">
-    <p class="visitor-count-text">Toplam Ziyaret: <span id="visitor-count-span">Yükleniyor...</span></p>
-</div>
-<p class="visitor-count-text">kaç kez ziyaret edildiğini gösterir.</p>
-    </div>
-
-    <script src="neon_lines.js"></script>
-    <script src="client.js"></script>
-    <script src="interactives.js"></script>
-
-<script type="module">
-    // Firebase fonksiyonunu import ediyoruz
-    import { updateVisitorCount } from './firebase-setup.js'; 
-
-    document.addEventListener('DOMContentLoaded', async () => {
-        const countSpan = document.getElementById('visitor-count-span');
-        
-        // Bu anahtar, tarayıcıda kalıcı olarak saklanacak (kapatılsa bile silinmez)
-        const HAS_VISITED_KEY = 'hasVisitedCybersecurity'; 
-        
-        let shouldIncrement = false;
-        
-        // Local Storage kontrolü: Bu tarayıcı bu siteyi DAHA ÖNCE ziyaret etti mi?
-        if (localStorage.getItem(HAS_VISITED_KEY) === null) {
-            // İlk defa ziyaret ediliyorsa, artırılmalı
-            shouldIncrement = true;
-            
-            // Bayrağı kalıcı olarak işaretle
-            localStorage.setItem(HAS_VISITED_KEY, 'true');
-        }
-
-        // Firebase fonksiyonunu çağır: ya artırıp yeni değeri al, ya da sadece mevcut değeri al.
-        const count = await updateVisitorCount(shouldIncrement);
-        
-        // Değeri ekranda göster
-        if (count !== "Hata") {
-            countSpan.textContent = count;
-        } else {
-            countSpan.textContent = "Bağlantı Hatası";
-        }
-    });
-</script>
-</body>
-=======
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siber Güvenlik</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="dark-background">
-
-    <canvas id="neon-lines"></canvas>
-
-    <div class="container">
-        <header class="main-header">
-            <h1>Daha Güvenli ve Bilgili Bir İnternet İçin Seneryoları Ziyaret Edin</h1>
-            <p>Ön test ile başlayın, ardından gizlilik, şifreler, veri bütünlüğü, gerçeklik, erişilebilirlik ve bilinçli kullanım konularında senaryoları tamamlayın.</p>
-            <a href="test.html" class="start-button">Ön Teste Hemen Başla</a>
-        </header>
-
-        <section class="scenario-grid">
-            <a href="gizlilik.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield-lock"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><rect x="8" y="11" width="8" height="6" rx="1"/><path d="M11 11V8a3 3 0 0 1 6 0v3"/></svg>
-                    </div>
-                    <h3>Gizlilik</h3>
-                    <p>Kişisel bilgilerin korunması</p>
-                </div>
-            </a>
-            
-            <a href="şifreler.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-key"><path d="M21 2l-6.5 6.5a1.5 1.5 0 0 0 0 2.12c.56.56 1.48.56 2.04 0L21 4"/><path d="M11 11l6.5-6.5"/><path d="M10 20l4-4"/><path d="M20 12l-8 8-4-4-8-8-4-4"/></svg>
-                    </div>
-                    <h3>Şifreler</h3>
-                    <p>Hesap güvenliği sağlama</p>
-                </div>
-            </a>
-
-            <a href="veri_butunlugu.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-database"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3"/></svg>
-                    </div>
-                    <h3>Veri Bütünlüğü</h3>
-                    <p>Verileri kaybetmeye karşı korunma</p>
-                </div>
-            </a>
-
-            <a href="gerceklik.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 2.05a.5.5 0 0 1 .71-.71l.71-.71A2 2 0 0 1 12 1a2 2 0 0 1 1.29.35l.71.71a.5.5 0 0 1 .71.71l.71.71A2 2 0 0 1 18 10v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h1.29l.71-.71z"/><path d="M12 15h.01"/><path d="M12 11V7"/></svg>
-                    </div>
-                    <h3>Gerçeklik</h3>
-                    <p>Aldatıcı içerikleri tanıma</p>
-                </div>
-            </a>
-
-            <a href="erisebilirlik.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-                    </div>
-                    <h3>Erişilebilirlik</h3>
-                    <p>Cihaz güvenliğini sağlama</p>
-                </div>
-            </a>
-
-            <a href="bilincli_kullanim.html" class="scenario-card-link">
-                <div class="scenario-card">
-                    <div class="icon-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square-check"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><polyline points="9 10 12 13 18 7"/></svg>
-                    </div>
-                    <h3>Bilinçli Kullanım</h3>
-                    <p>Güvenli internet kullanımı</p>
-                </div>
-            </a>
-        </section>
-        
-</section>
-
-        <a href="test.html" class="scenario-card-link">
-            <div class="scenario-card final-test-card">
-                <div class="icon-box">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-8.66"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                </div>
-                <h3>Son Testi Çöz</h3>
-                <p>Bilgilerinizi test edin ve sertifikanızı alın</p>
-            </div>
-        </a>
-<ul class="nav-links">
-    <li class="admin-position"><a href="admin.html" class="admin-link">Admin</a></li>
-</ul>
-<div class="counter-display">
-    <p class="visitor-count-text">Toplam Ziyaret: <span id="visitor-count-span">Yükleniyor...</span></p>
-</div>
-<p class="visitor-count-text">kaç kez ziyaret edildiğini gösterir.</p>
-    </div>
-
-    <script src="neon_lines.js"></script>
-    <script src="client.js"></script>
-    <script src="interactives.js"></script>
-
-<script type="module">
-    // Firebase fonksiyonunu import ediyoruz
-    import { updateVisitorCount } from './firebase-setup.js'; 
-
-    document.addEventListener('DOMContentLoaded', async () => {
-        const countSpan = document.getElementById('visitor-count-span');
-        
-        // Bu anahtar, tarayıcıda kalıcı olarak saklanacak (kapatılsa bile silinmez)
-        const HAS_VISITED_KEY = 'hasVisitedCybersecurity'; 
-        
-        let shouldIncrement = false;
-        
-        // Local Storage kontrolü: Bu tarayıcı bu siteyi DAHA ÖNCE ziyaret etti mi?
-        if (localStorage.getItem(HAS_VISITED_KEY) === null) {
-            // İlk defa ziyaret ediliyorsa, artırılmalı
-            shouldIncrement = true;
-            
-            // Bayrağı kalıcı olarak işaretle
-            localStorage.setItem(HAS_VISITED_KEY, 'true');
-        }
-
-        // Firebase fonksiyonunu çağır: ya artırıp yeni değeri al, ya da sadece mevcut değeri al.
-        const count = await updateVisitorCount(shouldIncrement);
-        
-        // Değeri ekranda göster
-        if (count !== "Hata") {
-            countSpan.textContent = count;
-        } else {
-            countSpan.textContent = "Bağlantı Hatası";
-        }
-    });
-</script>
-</body>
-</html>
+            <a href="bilincli_kullanim.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square-check"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><polyline points="9 10 12 13 18 7"/></svg>
+                    </div>
+                    <h3>Bilinçli Kullanım</h3>
+                    <p>Güvenli internet kullanımı</p>
+                </div>
+            </a>
+        </section>
+        
+                <a href="test.html" class="scenario-card-link">
+            <div class="scenario-card final-test-card">
+                <div class="icon-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-8.66"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <h3>Son Testi Çöz</h3>
+                <p>Bilgilerinizi test edin ve sertifikanızı alın</p>
+            </div>
+        </a>
+        <ul class="nav-links">
+            <li class="admin-position"><a href="admin.html" class="admin-link">Admin</a></li>
+        </ul>
+        <div class="counter-display">

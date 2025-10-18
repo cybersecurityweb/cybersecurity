@@ -1,3 +1,5 @@
+import { updateVisitorCount } from './firebase-setup.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     // Sayacın görüntüleneceği HTML elementini bul
     const visitorCountElement = document.getElementById('visitor-count');
@@ -25,4 +27,4 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Ziyaretçi sayısı alınamadı veya sunucu hatası:', error);
             visitorCountElement.textContent = 'Hata (Sunucuya Erişilemiyor)';
         });
-});
+})
