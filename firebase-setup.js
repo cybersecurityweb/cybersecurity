@@ -23,7 +23,7 @@ import {
     query, 
     where, 
     getDocs,
-    deleteDoc // Burada içe aktarılıyor
+    deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 import { setLogLevel } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
@@ -58,11 +58,12 @@ onAuthStateChanged(auth, async (user) => {
 // Oturum Açma: Canvas token'ı veya Anonim giriş kullanır
 async function initializeAuth() {
     try {
+        // Eğer Canvas token'ı varsa, kullan
         if (initialAuthToken) {
             await signInWithCustomToken(auth, initialAuthToken);
         } else {
-            // Admin panelinde giriş yapabilmek için admin kullanıcısının bu anonim kullanıcıdan farklı olması gerekiyor.
-            // Bu yüzden admin panelinde Auth'u kendi içinde yönetmek daha iyi.
+            // KRİTİK DÜZELTME: Eğer URL admin.html içeriyorsa, anonim giriş yapma! 
+            // Admin paneli kendi e-posta/şifre girişini kullanmalıdır.
             if (!window.location.href.includes('admin.html')) {
                 await signInAnonymously(auth);
             }
@@ -72,7 +73,7 @@ async function initializeAuth() {
     }
 }
 
-// Hemen Auth işlemini başlat (Admin sayfasında tekrar başlatılmaması için kontrol eklenmedi)
+// Hemen Auth işlemini başlat
 initializeAuth();
 
 // --- 2. FIRESTORE GENEL FONKSİYONLARI ---
@@ -122,8 +123,6 @@ export {
     query,
     where,
     getDocs,
-    deleteDoc, // Tekrar export hatasını gidermek için kontrol edildi
+    deleteDoc,
     doc
 };
-
-// initializeApp sadece bir kez burada çağrılıyor.
