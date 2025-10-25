@@ -1,109 +1,120 @@
-// admin-script.js - TEMİZLENMİŞ VE ÇALIŞAN KOD
+import { 
+    auth, 
+    db, 
+    appId,
+    collection, 
+    query, 
+    getDocs, 
+    where, 
+    doc,
+    deleteDoc,
+    signInWithEmailAndPassword 
+} from './firebase-setup.js';
 
-// Önemli: firebase-setup.js'den auth ve db objelerini import ediyoruz
-import { auth, db } from './firebase-setup.js'; 
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
-import { collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
+// --- Yardımcı Fonksiyonlar (Hata Mesajı Gösterme) ---
 
-// HTML Elementleri
-const loginForm = document.getElementById('login-form');
-const adminEmail = document.getElementById('admin-email');
-const adminPassword = document.getElementById('admin-password');
-const loginBtn = document.getElementById('login-btn');
-const loginError = document.getElementById('login-error');
-const statsPanel = document.getElementById('stats-panel');
-const statsContent = document.getElementById('stats-content');
-const logoutBtn = document.getElementById('logout-btn');
-
-// Admin Giriş İşlemi
-loginBtn.addEventListener('click', async () => {
-    const email = adminEmail.value;
-    const password = adminPassword.value;
-    
-    loginError.style.display = 'none';
-    
-    try {
-        await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-        console.error("Giriş hatası:", error);
-        loginError.style.display = 'block';
-    }
-});
-
-// Çıkış İşlemi
-logoutBtn.addEventListener('click', async () => {
-    await signOut(auth);
-});
-
-
-// Kimlik Doğrulama Durumu Değiştiğinde
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // Kullanıcı Giriş Yaptı (Admin)
-        loginForm.style.display = 'none';
-        statsPanel.style.display = 'block';
-        fetchStats(); // İstatistikleri çekmeye başla
+/**
+ * Kullanıcıya ekranın ortasında bir hata mesajı gösterir.
+ * @param {string} message - Gösterilecek hata mesajı
+ */
+function showErrorMessage(message) {
+    let errorBox = document.getElementById('error-message-box');
+    if (!errorBox) {
+        errorBox = document.createElement('div');
+        errorBox.id = 'error-message-box';
+        errorBox.className = 'fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50';
+        errorBox.innerHTML = `
+            <div class="bg-red-800 text-white p-6 rounded-lg shadow-2xl max-w-sm text-center transform transition-all duration-300 scale-100">
+                <h3 class="text-xl font-bold mb-4">Hata</h3>
+                <p id="error-text">${message}</p>
+                <button onclick="document.getElementById('error-message-box').remove()" class="mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded transition duration-200">Kapat</button>
+            </div>
+        `;
+        document.body.appendChild(errorBox);
+        document.getElementById('error-text').textContent = message;
     } else {
-        // Kullanıcı Çıkış Yaptı
-        loginForm.style.display = 'block';
-        statsPanel.style.display = 'none';
-        statsContent.innerHTML = '<p>Lütfen giriş yapın.</p>';
-    }
-});
-
-// Veritabanından İstatistikleri Çekme ve Hesaplama
-async function fetchStats() {
-    statsContent.innerHTML = 'İstatistikler yükleniyor...';
-    try {
-        const querySnapshot = await getDocs(collection(db, "test_results"));
-        
-        const results = [];
-        querySnapshot.forEach((doc) => {
-            results.push(doc.data());
-        });
-        
-        displayStats(results); 
-        
-    } catch (error) {
-        console.error("Veri çekme hatası:", error);
-        statsContent.innerHTML = '<p style="color: red;">Veri çekilirken bir hata oluştu.</p>';
+        document.getElementById('error-text').textContent = message;
+        errorBox.style.display = 'flex';
     }
 }
 
-// İstatistikleri Ekranda Gösterme
-function displayStats(results) {
-    if (results.length === 0) {
-        statsContent.innerHTML = 'Henüz hiçbir test sonucu kaydedilmemiş.';
+// Admin Girişini Yöneten Fonksiyon
+async function handleAdminLogin() {
+    const emailInput = document.getElementById('admin-email');
+    const passwordInput = document.getElementById('admin-password');
+    const loginButton = document.getElementById('login-button');
+
+    const email = emailInput ? emailInput.value : '';
+    const password = passwordInput ? passwordInput.value : '';
+    
+    // Yükleniyor durumunu ayarla
+    loginButton.innerHTML = `<span class="loading-spin"></span> Giriş Yapılıyor...`;
+    loginButton.disabled = true;
+
+    if (!auth) {
+        showErrorMessage('Hata: Firebase Auth hizmeti başlatılamadı. Yapılandırmayı kontrol edin.');
+        loginButton.innerHTML = `Giriş Yap`;
+        loginButton.disabled = false;
         return;
     }
-    
-    // Toplam test sayısını ve puanları hesapla
-    const totalTests = results.length;
-    let totalScoreSum = 0;
 
-    results.forEach(result => {
-        totalScoreSum += result.totalScore;
-    });
-
-    const averageScore = (totalScoreSum / totalTests).toFixed(2);
-    
-    // Testte 24 soru ve her sorunun max 7 puan (Kesinlikle Katılıyorum) olduğunu varsayarsak max puan 168'dir.
-    // NOT: Önceki kodda 7x7=49 yazıyordu, 24 sorunuz olduğu için 24x7=168 olmalıdır. DÜZELTİLDİ.
-    const maxScore = 24 * 7; 
-    
-    statsContent.innerHTML = `
-        <h3>Genel Bakış</h3>
-        <p><strong>Toplam Yapılan Test Sayısı:</strong> ${totalTests}</p>
-        <p><strong>Ortalama Puan:</strong> ${averageScore} / ${maxScore}</p>
+    try {
+        // Firebase Auth ile giriş yapma denemesi
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log("Giriş başarılı:", userCredential.user.uid);
         
-        <h3 style="margin-top: 30px;">Tüm Kayıtlar</h3>
-        <ul style="list-style-type: none; padding: 0;">
-            ${results.map(r => `
-                <li style="border-bottom: 1px solid #333; padding: 10px 0;">
-                    <strong>Puan:</strong> ${r.totalScore} 
-                    (Tarih: ${r.timestamp ? new Date(r.timestamp.seconds * 1000).toLocaleString('tr-TR') : 'Yükleniyor'})
-                </li>
-            `).join('')}
-        </ul>
-    `;
+        // Başarılı girişte paneli göster (HTML'inizdeki ID'lere göre ayarlanmalı)
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('admin-panel-content').style.display = 'block';
+
+        // Verileri yüklemeye başla
+        await loadFromFirebase();
+
+    } catch (error) {
+        console.error("Firebase Giriş Hatası:", error);
+        loginButton.innerHTML = `Giriş Yap`;
+        loginButton.disabled = false;
+
+        let userMessage = 'Giriş başarısız. Lütfen e-posta ve şifrenizi kontrol edin.';
+
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            userMessage = 'E-posta veya şifre hatalı.';
+        } else if (error.code === 'auth/missing-api-key') {
+            userMessage = 'Hata: Firebase API anahtarı eksik. Yapılandırmayı kontrol edin.';
+        }
+
+        showErrorMessage(`Giriş Hatası: ${userMessage}`);
+    }
 }
+
+// --- Firebase Veri Yükleme ---
+
+async function loadFromFirebase() {
+    console.log("Firebase'den veriler yükleniyor...");
+
+    // Verilerinizin bulunduğu varsayılan yolu kullanıyoruz
+    const collectionPath = `artifacts/${appId}/public/data/veliler`;
+    const velilerRef = collection(db, collectionPath);
+    
+    try {
+        const snapshot = await getDocs(velilerRef);
+        const veliList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        console.log(`Yüklendi: ${veliList.length} veli verisi.`);
+        
+        // Buradan sonra paneli verilerle doldurma fonksiyonlarınız çağrılmalıdır.
+        // Örneğin: renderAdminPanel(veliList);
+
+    } catch (error) {
+        console.error("Veri yüklenirken hata oluştu:", error);
+        showErrorMessage("Veri yüklenirken bir hata oluştu. Lütfen Firestore Güvenlik kurallarınızı ve Admin yetkinizi kontrol edin.");
+    }
+}
+
+// --- Event Listener'lar ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    const loginButton = document.getElementById('login-button');
+    if (loginButton) {
+        loginButton.addEventListener('click', handleAdminLogin);
+    }
+});
