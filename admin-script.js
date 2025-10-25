@@ -8,15 +8,18 @@ import {
     onAuthStateChanged, 
     signOut,
     collection, 
-    getDocs 
+    getDocs,
+    query,
+    where
 } from './firebase-setup.js';
 
 // HTML Elementleri - ID'leri mevcut HTML yapınıza göre ayarladım
+// DİKKAT: loginBtn yerine loginButton ve loginError yerine errorMessageDisplay kullanıldı.
 const loginForm = document.getElementById('login-form');
 const adminEmail = document.getElementById('admin-email');
 const adminPassword = document.getElementById('admin-password');
-const loginButton = document.getElementById('login-button'); // Canvas'taki ID
-const errorMessageDisplay = document.getElementById('error-message'); // Canvas'taki ID
+const loginButton = document.getElementById('login-button'); // Giriş Butonu ID'si
+const errorMessageDisplay = document.getElementById('error-message'); // Hata Mesajı ID'si
 
 // Admin Panel İçeriği (HTML'inizde bu ID'lerin olması gerekir)
 const loginContainer = document.getElementById('login-container');
@@ -27,6 +30,8 @@ const logoutBtn = document.getElementById('logout-btn');
 
 /**
  * Kullanıcıya mesaj gösterir (Tailwind CSS sınıfları ile)
+ * NOT: Bu fonksiyon, Hata 2'yi ('Cannot set properties of null') önlemek için 
+ * errorMessageDisplay elementini kontrol eder.
  * @param {string} message - Gösterilecek mesaj.
  * @param {boolean} isError - Hata olup olmadığı.
  */
@@ -42,11 +47,10 @@ function showMessage(message, isError = true) {
 
 // Veritabanından İstatistikleri Çekme ve Hesaplama
 async function fetchStats() {
-    statsContent.innerHTML = 'İstatistikler yükleniyor...';
+    if (statsContent) statsContent.innerHTML = 'İstatistikler yükleniyor...';
     
-    // Auth nesnesinin yüklendiğini kontrol et (Fazladan güvenlik)
-    if (!auth) {
-        statsContent.innerHTML = '<p style="color: red;">Firebase Auth Başlatılamadı.</p>';
+    if (!auth || !db) {
+        if (statsContent) statsContent.innerHTML = '<p class="text-red-500">Firebase Auth/DB Başlatılamadı.</p>';
         return;
     }
 
@@ -63,13 +67,15 @@ async function fetchStats() {
         
     } catch (error) {
         console.error("Veri çekme hatası:", error);
-        statsContent.innerHTML = '<p class="text-red-500">Veri çekilirken bir hata oluştu. Güvenlik kurallarını kontrol edin.</p>';
+        if (statsContent) statsContent.innerHTML = '<p class="text-red-500">Veri çekilirken bir hata oluştu. Güvenlik kurallarını kontrol edin.</p>';
     }
 }
 
 
 // İstatistikleri Ekranda Gösterme
 function displayStats(results) {
+    if (!statsContent) return;
+
     if (results.length === 0) {
         statsContent.innerHTML = '<p class="text-gray-500">Henüz hiçbir test sonucu kaydedilmemiş.</p>';
         return;
@@ -95,7 +101,10 @@ function displayStats(results) {
             <h3 class="text-xl font-bold border-b pb-2 pt-6">Tüm Kayıtlar</h3>
             <ul class="space-y-2">
                 ${results.map(r => {
-                    const date = r.timestamp ? new Date(r.timestamp.seconds * 1000).toLocaleString('tr-TR') : 'Yükleniyor';
+                    // Firestore timestamp'ten doğru tarih formatı
+                    const date = r.timestamp && r.timestamp.seconds 
+                        ? new Date(r.timestamp.seconds * 1000).toLocaleString('tr-TR') 
+                        : 'Yükleniyor';
                     return `
                         <li class="border-b border-gray-200 pb-2">
                             <span class="font-semibold text-lg text-blue-600">Puan: ${r.totalScore}</span> 
@@ -129,8 +138,12 @@ async function handleAdminLogin(email, password) {
         loginButton.disabled = false;
 
         let userMessage = "Giriş başarısız oldu. Lütfen e-posta ve şifrenizi kontrol edin.";
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        
+        // Firebase Auth Hata Kodlarını Türkçe'ye çeviriyoruz
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
             userMessage = "E-posta veya şifre hatalı.";
+        } else if (error.code === 'auth/invalid-email') {
+             userMessage = "Geçersiz e-posta formatı.";
         }
         
         showMessage(`Hata: ${userMessage}`, true);
@@ -142,7 +155,7 @@ async function handleAdminLogin(email, password) {
 if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
         await signOut(auth);
-        showMessage("Başarıyla çıkış yapıldı.", false);
+        showMessage("Başarıyla çıkış yapıldı. Lütfen tekrar giriş yapın.", false);
     });
 }
 
@@ -156,13 +169,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Kullanıcı Giriş Yaptı (Admin)
                 if (loginContainer) loginContainer.style.display = 'none';
                 if (adminPanelContent) adminPanelContent.style.display = 'block';
-                showMessage(`Hoş geldiniz, Admin (${user.email})!`, false);
+                // E-posta adresi null gelme ihtimaline karşı kontrol
+                const userEmail = user.email || 'Bilinmeyen Kullanıcı';
+                showMessage(`Hoş geldiniz, Admin (${userEmail})!`, false);
                 fetchStats(); // İstatistikleri çekmeye başla
             } else {
                 // Kullanıcı Çıkış Yaptı
                 if (loginContainer) loginContainer.style.display = 'block';
                 if (adminPanelContent) adminPanelContent.style.display = 'none';
-                statsContent.innerHTML = '<p class="text-gray-500">İstatistikleri görmek için lütfen giriş yapın.</p>';
+                if (statsContent) statsContent.innerHTML = '<p class="text-gray-500">İstatistikleri görmek için lütfen giriş yapın.</p>';
                 showMessage('Lütfen giriş yapın.', false);
             }
             // Butonu tekrar etkinleştir
@@ -180,14 +195,25 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const email = adminEmail ? adminEmail.value : '';
         const password = adminPassword ? adminPassword.value : '';
+        
+        // Basit boş alan kontrolü
+        if (!email || !password) {
+            showMessage("Lütfen e-posta ve şifrenizi giriniz.", true);
+            return;
+        }
+
         handleAdminLogin(email, password);
     };
 
+    // Giriş formunu veya butonu dinleme
     if (loginForm) {
         loginForm.addEventListener('submit', submitHandler);
     } else if (loginButton) {
+        // Eğer HTML'de sadece butona ID verilmişse (formsuz kullanım için)
         loginButton.addEventListener('click', submitHandler);
     } else {
-        console.error("Hata: Admin panelinde giriş mekanizması (form veya buton) bulunamadı.");
+        // Hata: Admin Panelinde Giriş Elementleri Bulunamadı (image_cb2be1.png hatası)
+        console.error("HATA: Admin panelinde giriş mekanizması (loginForm veya loginButton) bulunamadı. Lütfen ID'leri kontrol edin.");
+        showMessage("HATA: Giriş elementleri HTML'de bulunamadı. ID'leri kontrol edin.", true);
     }
 });

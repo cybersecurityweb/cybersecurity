@@ -19,7 +19,8 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.4.0/firebas
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
 
 // Firestore Modüllerini yükle
-import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, runTransaction, updateDoc, query, where, getDocs, setDoc } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
+// doc, getDoc, runTransaction, updateDoc gibi fonksiyonlar sadece bu dosya içinde kullanılır
+import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, runTransaction, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
 
 
 // Firebase'i Başlatma
@@ -96,8 +97,7 @@ export async function updateVisitorCount(shouldIncrement) {
 
 /**
  * Admin Panelinin ve diğer modüllerin ihtiyacı olan tüm fonksiyonları dışa aktar
- * Bu fonksiyonları doğrudan modüllerden almak yerine, daha kararlı bir yapı için 
- * bu dosyanın en üstünde içe aktarıp, sonra buradan dışa aktarıyoruz.
+ * Sadece admin-script.js'de doğrudan kullanılan fonksiyonları listeliyoruz.
  */
 export { 
     signInWithEmailAndPassword, 
@@ -106,10 +106,7 @@ export {
     collection, 
     getDocs, 
     query, 
-    where, 
-    updateDoc,
-    setDoc,
-    doc
+    where
 };
 
 // Varsayılan uygulama ID'si
