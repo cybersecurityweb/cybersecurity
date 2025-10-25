@@ -1,22 +1,28 @@
-// Firebase SDK'sinden gerekli modüllerin en güncel versiyonu import ediliyor.
-// Canvas ortamında URL üzerinden import edilmesi zorunludur.
-import { initializeApp, setLogLevel } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, runTransaction, updateDoc, query, where, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
-import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+// firebase-setup.js - BİRLEŞTİRİLMİŞ VE TEMİZLENMİŞ KOD
 
+// Firebase Konfigürasyonu (Sizin bilgilerinizle)
+const firebaseConfig = {
+    apiKey: "AIzaSyDdkl1ZV3f2opyXwcNFbEZHRvWcSTgLLJ4",
+    authDomain: "cybersecurity-test-analytics.firebaseapp.com",
+    projectId: "cybersecurity-test-analytics",
+    storageBucket: "cybersecurity-test-analytics.firebasestorage.app",
+    messagingSenderId: "1070203500987",
+    appId: "1:1070203500987:web:0a3b257a0fabcb3ff02c9e",
+    measurementId: "G-HBSRZWSKJ2"
+};
 
-// --- ZORUNLU CANVAS ORTAM AYARLARI ---
-// Bu ortamda, config bilgileri global değişkenler üzerinden sağlanır.
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-// Uygulama ID'si, koleksiyon yollarını doğru oluşturmak için gereklidir.
-export const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+// Gerekli Firebase Modüllerini Yükleme (Tüm Modüller Tek Bir Yerde Toplandı)
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js';
+// firebase-setup.js içindeki import satırı (eski)
+// import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, runTransaction } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
 
-// Hata ayıklama (debug) loglarını aç
-setLogLevel('debug');
+// firebase-setup.js içindeki import satırı (YENİ VE EKSİKLERİ TAMAMLAYAN)
+import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, runTransaction, updateDoc, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
+import { getAuth } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
 
 
 // Firebase'i Başlatma
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
 // Veritabanı ve Yetkilendirme (Auth) Referansları
 export const db = getFirestore(app);
@@ -25,22 +31,17 @@ export const auth = getAuth(app);
 
 /**
  * Test sonuçlarını Firestore veritabanına kaydeder.
- * Admin paneli için bu fonksiyon gerekli olmayabilir, ancak uyumluluk için tutuluyor.
  * @param {string} testType - 'pre' (ön test) veya 'post' (son test)
  * @param {object} answers - Kullanıcının tüm cevapları
  * @param {number} score - Toplam puan
- * @param {object} userData - Kullanıcı demografik verileri (Cinsiyet, Yaş vb.)
  */
-export async function saveTestResult(testType, answers, score, userData) {
+export async function saveTestResult(testType, answers, score) {
     try {
-        // Verilerinizi 'test_results' koleksiyonuna kaydediyoruz.
-        // Güvenlik kurallarınıza göre bu yol değişebilir (örnek: public/data/test_results)
         await addDoc(collection(db, "test_results"), {
             testType: testType,
             answers: answers,
             totalScore: score,
-            userData: userData, // Yeni demografik veriler
-            timestamp: serverTimestamp() 
+            timestamp: serverTimestamp() // Kayıt zamanını Firestore'dan otomatik al
         });
         console.log("Sonuç Firebase'e başarıyla kaydedildi.");
         return true;
@@ -81,25 +82,9 @@ export async function updateVisitorCount(shouldIncrement) {
             const docSnap = await getDoc(counterRef);
             return docSnap.exists() ? docSnap.data().count : 0;
         } catch (e) {
+            // Hata durumunda bile 0 göster
             console.error("Sayaç okuma hatası:", e);
             return 0;
         }
     }
 }
-
-// Admin panelinde kullanılacak gerekli fonksiyonlar toplu olarak dışa aktarılıyor.
-export {
-    collection, 
-    addDoc, 
-    serverTimestamp, 
-    doc, 
-    getDoc, 
-    runTransaction, 
-    updateDoc, 
-    query, 
-    where, 
-    getDocs,
-    deleteDoc,
-    // Admin girişi için bu zorunludur.
-    signInWithEmailAndPassword 
-};
