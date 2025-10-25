@@ -16,10 +16,10 @@ const firebaseConfig = {
 // Gerekli Firebase Modüllerini Yükleme (Tüm Modüller Tek Bir Yerde Toplandı)
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js';
 
-// Auth Modülleri
+// Auth Modüllerini yükle ve sadece kullanacağımız fonksiyonları direkt olarak dışa aktar
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
 
-// Firestore Modülleri
+// Firestore Modüllerini yükle
 import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, runTransaction, updateDoc, query, where, getDocs, setDoc } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
 
 
@@ -97,15 +97,14 @@ export async function updateVisitorCount(shouldIncrement) {
 
 /**
  * Admin Panelinin ve diğer modüllerin ihtiyacı olan tüm fonksiyonları dışa aktar
- * Bu blok, Admin Giriş hatasını çözmek için eklenmiştir.
+ * Bu fonksiyonları doğrudan modüllerden almak yerine, daha kararlı bir yapı için 
+ * bu dosyanın en üstünde içe aktarıp, sonra buradan dışa aktarıyoruz.
+ * Önceki yapıda "Duplicate export" ve modül yükleme hatası yaşanıyordu.
  */
 export { 
     signInWithEmailAndPassword, 
     onAuthStateChanged, 
-    signOut 
-} from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
-
-export { 
+    signOut,
     collection, 
     getDocs, 
     query, 
@@ -113,7 +112,7 @@ export {
     updateDoc,
     setDoc,
     doc
-} from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
+};
 
 // Varsayılan uygulama ID'si
 const appId = "default-app-id";
