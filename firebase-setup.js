@@ -2,7 +2,6 @@
 
 // Firebase Konfigürasyonu (Sizin bilgilerinizle)
 // Not: Firebase Config bilgilerini doğrudan kodu değiştirmeden kullanmak için Canvas ortamındaki global değişkenler kullanılır.
-// Ancak bu ortamda doğrudan config kullanıldığı için sizin yapınızı koruyoruz.
 const firebaseConfig = {
     apiKey: "AIzaSyDdkl1ZV3f2opyXwcNFbEZHRvWcSTgLLJ4",
     authDomain: "cybersecurity-test-analytics.firebaseapp.com",
@@ -16,7 +15,7 @@ const firebaseConfig = {
 // Gerekli Firebase Modüllerini Yükleme (Tüm Modüller Tek Bir Yerde Toplandı)
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js';
 
-// Auth Modüllerini yükle ve sadece kullanacağımız fonksiyonları direkt olarak dışa aktar
+// Auth Modüllerini yükle
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
 
 // Firestore Modüllerini yükle
@@ -99,7 +98,6 @@ export async function updateVisitorCount(shouldIncrement) {
  * Admin Panelinin ve diğer modüllerin ihtiyacı olan tüm fonksiyonları dışa aktar
  * Bu fonksiyonları doğrudan modüllerden almak yerine, daha kararlı bir yapı için 
  * bu dosyanın en üstünde içe aktarıp, sonra buradan dışa aktarıyoruz.
- * Önceki yapıda "Duplicate export" ve modül yükleme hatası yaşanıyordu.
  */
 export { 
     signInWithEmailAndPassword, 
