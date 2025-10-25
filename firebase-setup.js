@@ -1,114 +1,129 @@
-// firebase-setup.js - BİRLEŞTİRİLMİŞ VE TEMİZLENMİŞ KOD
+// --- FIREBASE KURULUMU ve GENEL FONKSİYONLAR ---
+// Bu dosya, tüm uygulamalar (index, quiz, admin) tarafından kullanılacak
+// Firebase bağlantısını ve temel Auth/Firestore fonksiyonlarını içerir.
 
-// Firebase Konfigürasyonu (Sizin bilgilerinizle)
-// Not: Firebase Config bilgilerini doğrudan kodu değiştirmeden kullanmak için Canvas ortamındaki global değişkenler kullanılır.
-const firebaseConfig = {
-    apiKey: "AIzaSyDdkl1ZV3f2opyXwcNFbEZHRvWcSTgLLJ4",
-    authDomain: "cybersecurity-test-analytics.firebaseapp.com",
-    projectId: "cybersecurity-test-analytics",
-    storageBucket: "cybersecurity-test-analytics.firebasestorage.app",
-    messagingSenderId: "1070203500987",
-    appId: "1:1070203500987:web:0a3b257a0fabcb3ff02c9e",
-    measurementId: "G-HBSRZWSKJ2"
-};
-
-// Gerekli Firebase Modüllerini Yükleme (Tüm Modüller Tek Bir Yerde Toplandı)
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js';
-
-// Auth Modüllerini yükle
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
-
-// Firestore Modüllerini yükle
-// doc, getDoc, runTransaction, updateDoc gibi fonksiyonlar sadece bu dosya içinde kullanılır
-import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, runTransaction, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
-
-
-// Firebase'i Başlatma
-const app = initializeApp(firebaseConfig);
-
-// Veritabanı ve Yetkilendirme (Auth) Referansları
-export const db = getFirestore(app);
-export const auth = getAuth(app);
-
-
-/**
- * Test sonuçlarını Firestore veritabanına kaydeder.
- * @param {string} testType - 'pre' (ön test) veya 'post' (son test)
- * @param {object} answers - Kullanıcının tüm cevapları
- * @param {number} score - Toplam puan
- */
-export async function saveTestResult(testType, answers, score) {
-    try {
-        await addDoc(collection(db, "test_results"), {
-            testType: testType,
-            answers: answers,
-            totalScore: score,
-            timestamp: serverTimestamp() // Kayıt zamanını Firestore'dan otomatik al
-        });
-        console.log("Sonuç Firebase'e başarıyla kaydedildi.");
-        return true;
-    } catch (e) {
-        console.error("Sonuç kaydetme hatası:", e);
-        return false;
-    }
-}
-
-
-/**
- * Sayacı koşullu olarak bir artırır ve güncel değeri döndürür.
- * @param {boolean} shouldIncrement - True ise artır, False ise sadece mevcut değeri oku.
- */
-export async function updateVisitorCount(shouldIncrement) {
-    const counterRef = doc(db, "meta", "visitor_count");
-
-    if (shouldIncrement) {
-        // Artırma modu: Transaction kullanarak atomik artırma yap
-        try {
-            const newCount = await runTransaction(db, async (transaction) => {
-                const counterDoc = await transaction.get(counterRef);
-                const currentCount = counterDoc.exists() ? counterDoc.data().count : 0;
-                
-                // Hata kontrolü: Eğer değer sayı değilse, 0'dan başla
-                const safeCount = typeof currentCount === 'number' ? currentCount : 0;
-                
-                const updatedCount = safeCount + 1;
-                
-                transaction.set(counterRef, { count: updatedCount });
-                return updatedCount;
-            });
-            return newCount;
-        } catch (e) {
-            console.error("Sayaç güncelleme hatası:", e);
-            return "Hata";
-        }
-    } 
-    else {
-        // Sadece okuma modu
-        try {
-            const docSnap = await getDoc(counterRef);
-            return docSnap.exists() ? docSnap.data().count : 0;
-        } catch (e) {
-            // Hata durumunda bile 0 göster
-            console.error("Sayaç okuma hatası:", e);
-            return 0;
-        }
-    }
-}
-
-/**
- * Admin Panelinin ve diğer modüllerin ihtiyacı olan tüm fonksiyonları dışa aktar
- * Sadece admin-script.js'de doğrudan kullanılan fonksiyonları listeliyoruz.
- */
-export { 
-    signInWithEmailAndPassword, 
-    onAuthStateChanged, 
+// Gerekli Firebase modüllerini içe aktarma
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { 
+    getAuth, 
+    signInWithCustomToken, 
+    signInAnonymously, 
+    onAuthStateChanged,
     signOut,
+    signInWithEmailAndPassword // Admin girişi için
+} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { 
+    getFirestore, 
+    doc, 
+    setDoc, 
+    getDoc, 
+    updateDoc, 
+    increment, 
     collection, 
-    getDocs, 
     query, 
-    where
+    where, 
+    getDocs,
+    deleteDoc // Burada içe aktarılıyor
+} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+import { setLogLevel } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+// Hata ayıklama seviyesini ayarlama (Opsiyonel, hataları görmeyi kolaylaştırır)
+setLogLevel('debug'); 
+
+// Global Değişkenleri Yükleme
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+// Firebase Uygulamasını Başlatma
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+let currentUserId = null;
+
+// --- 1. AUTHENTICATION MANTIĞI ---
+
+// Uygulama başlatıldığında veya kimlik doğrulama durumu değiştiğinde çağrılır
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        currentUserId = user.uid;
+        localStorage.setItem('currentUserId', currentUserId);
+
+    } else {
+        currentUserId = null;
+        localStorage.removeItem('currentUserId');
+    }
+});
+
+// Oturum Açma: Canvas token'ı veya Anonim giriş kullanır
+async function initializeAuth() {
+    try {
+        if (initialAuthToken) {
+            await signInWithCustomToken(auth, initialAuthToken);
+        } else {
+            // Admin panelinde giriş yapabilmek için admin kullanıcısının bu anonim kullanıcıdan farklı olması gerekiyor.
+            // Bu yüzden admin panelinde Auth'u kendi içinde yönetmek daha iyi.
+            if (!window.location.href.includes('admin.html')) {
+                await signInAnonymously(auth);
+            }
+        }
+    } catch (error) {
+        console.error("Kimlik doğrulama başlatılırken hata oluştu:", error);
+    }
+}
+
+// Hemen Auth işlemini başlat (Admin sayfasında tekrar başlatılmaması için kontrol eklenmedi)
+initializeAuth();
+
+// --- 2. FIRESTORE GENEL FONKSİYONLARI ---
+
+/**
+ * Ziyaretçi sayısını artırır (Günlük tekil sayım kontrolü çağıran fonksiyonda yapılmalıdır).
+ */
+async function updateVisitorCount() {
+    const docRef = doc(db, 'artifacts', appId, 'public/data', 'visitorCount');
+    try {
+        await updateDoc(docRef, {
+            count: increment(1)
+        });
+        console.log("Ziyaretçi sayısı artırıldı.");
+    } catch (e) {
+        // Eğer döküman yoksa oluştur
+        if (e.code === 'not-found') {
+            await setDoc(docRef, { count: 1 });
+            console.log("Ziyaretçi sayacı oluşturuldu ve 1 olarak ayarlandı.");
+        } else {
+            console.error("Ziyaretçi sayacı güncellenirken hata oluştu:", e);
+        }
+    }
+}
+
+
+/**
+ * Kullanıcı kimlik doğrulama durumunu dinler (Admin script'i için dışa aktarıldı)
+ * @param {function} callback - (user) => {} şeklinde bir geri çağırma fonksiyonu
+ */
+function listenToAuthChanges(callback) {
+    return onAuthStateChanged(auth, callback);
+}
+
+
+// --- 3. DIŞA AKTARIMLAR (Admin paneli, index, quiz scriptleri için) ---
+
+export { 
+    db, 
+    auth, 
+    updateVisitorCount,
+    onAuthStateChanged, 
+    listenToAuthChanges, 
+    signInWithEmailAndPassword, 
+    signOut,
+    collection,
+    query,
+    where,
+    getDocs,
+    deleteDoc, // Tekrar export hatasını gidermek için kontrol edildi
+    doc
 };
 
-// Varsayılan uygulama ID'si
-const appId = "default-app-id";
-export { appId };
+// initializeApp sadece bir kez burada çağrılıyor.
