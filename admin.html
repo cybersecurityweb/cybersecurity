@@ -3,63 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Paneli | Giriş ve Yönetim</title>
+    <title>Admin Paneli | İstatistikler</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Inter fontunu kullan */
         body { font-family: 'Inter', sans-serif; }
-        /* Animasyon için temel CSS */
         .loading-spin { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* Panel için koyu arka plan */
+        .dark-bg { background-color: #0d1117; } 
+        .dark-card { background-color: #161b22; }
+        .text-neon { color: #58a6ff; }
     </style>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+<body class="dark-bg transition-colors duration-300">
 
     <div id="app-root">
-        <!-- Uygulama İçeriği Buraya Yüklenecek (Giriş veya Panel) -->
+        <!-- Uygulama İçeriği Buraya Yüklenecek -->
     </div>
 
-    <!-- type="module" kaldırıldı. Artık standart bir script olarak çalışacak. -->
-    <script>
-        // --- UYGULAMA DURUMU (STATE) ---
+    <!-- Firebase Kütüphaneleri -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firestore loglarını etkinleştir (Geliştirme için faydalı)
+        setLogLevel('Debug');
+        
+        // --- EVRENSEL DEĞİŞKENLER (Canvas Ortamından) ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        let db, auth;
         let isLoggedIn = false;
         const appRoot = document.getElementById('app-root');
-        
-        // Mock (Sahte) Giriş Bilgileri
-        const MOCK_EMAIL = 'admin@example.com';
-        const MOCK_PASSWORD = '123456';
 
         // --- İKON SVG'LERİ ---
         const icons = {
-            User: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
-            Zap: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
-            RefreshCw: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-5.6 1.7L1 8"/><path d="M1 4v4h4"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 5.6-1.7L23 16"/><path d="M23 12v4h-4"/></svg>`,
-            LogOut: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>`,
-            LayoutList: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>`,
-            MessageCircleQuestion: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>`,
-            ListChecks: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 2.9-2.9"/><path d="M7.3 15.3 11 19"/><path d="M14.4 12.3 22 4"/><path d="M16 8l-1.5 7.5"/><path d="m20 20-3.5-5.5"/></svg>`,
-            BarChart: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>`,
+            User: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+            LogOut: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>`,
+            BarChart: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart-3"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>`,
+            TrendingUp: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>`,
+            Users: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+            Download: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>`,
+            Filter: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-filter"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>`,
+            RotateCw: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw"><path d="M21 12a9 9 0 1 1-9-9c2.72 0 4.26 1.35 5.25 2.76"/><path d="M21 3v5h-5"/></svg>`,
         };
 
-        // --- MOCK ETKİNLİK VERİLERİ (Admin Panel İçeriği) ---
-        const mockActivities = [
-            { id: 'q1', type: "Quiz", title: "Temel JavaScript Testi", status: "Taslak", icon: 'ListChecks', color: 'blue' },
-            { id: 'p1', type: "Poll", title: "Tercih Edilen CSS Çerçevesi", status: "Canlı", icon: 'BarChart', color: 'indigo' },
-            { id: 'qa1', type: "Q&A", title: "Proje Final Soruları", status: "Aktif", icon: 'MessageCircleQuestion', color: 'green' },
-            { id: 'q2', type: "Quiz", title: "Firebase Güvenlik Kuralları", status: "Sona Erdi", icon: 'ListChecks', color: 'slate' },
-        ];
+        // --- FIREBASE İLK BAŞLATMA VE AUTH LİSTENER ---
 
+        if (Object.keys(firebaseConfig).length > 0) {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Auth durumunu dinle
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    isLoggedIn = true;
+                    // Kullanıcı giriş yapmışsa paneli render et
+                    renderApp();
+                } else if (initialAuthToken) {
+                    // Custom Token varsa oturum açmayı dene
+                    try {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        // onAuthStateChanged tekrar tetiklenecek
+                    } catch (error) {
+                        console.error("Custom Token ile giriş hatası:", error);
+                        isLoggedIn = false;
+                        renderApp();
+                    }
+                } else {
+                    isLoggedIn = false;
+                    // Kullanıcı çıkış yapmışsa veya token yoksa giriş ekranını göster
+                    renderApp();
+                }
+            });
+        } else {
+            console.error("Firebase yapılandırması eksik. Uygulama Firebase'siz çalışıyor.");
+            // Firebase yoksa ve isLoggedIn false ise giriş ekranını göster (Manuel test için)
+            // Varsayılan olarak Giriş Ekranını göster
+            isLoggedIn = false;
+            document.addEventListener('DOMContentLoaded', renderApp);
+        }
 
         // --- RENDER FONKSİYONLARI ---
 
-        // 1. Giriş Sayfası (Login Screen)
+        // 1. Giriş Sayfası (Login Screen) - Firebase Auth Kullanır
         function renderLoginScreen(error = '') {
             appRoot.innerHTML = `
-                <div class="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-6">
-                    <div class="bg-gray-800 p-8 sm:p-12 rounded-2xl shadow-2xl w-full max-w-md text-center border-t-4 border-indigo-500 transition-all duration-300 transform hover:shadow-indigo-500/50">
+                <div class="flex flex-col items-center justify-center min-h-screen dark-bg text-white p-6">
+                    <div class="dark-card p-8 sm:p-12 rounded-2xl shadow-2xl w-full max-w-md text-center border-t-4 border-neon transition-all duration-300 transform hover:shadow-lg">
                         <div class="flex justify-center mb-6">
-                            <div class="w-12 h-12 text-indigo-400">${icons.User}</div>
+                            <div class="w-12 h-12 text-neon">${icons.User}</div>
                         </div>
                         <h1 class="text-3xl font-extrabold mb-8 text-white">Yönetici Girişi</h1>
 
@@ -69,9 +109,8 @@
                                     type="email"
                                     placeholder="E-posta"
                                     id="email"
-                                    class="w-full px-4 py-3 rounded-xl bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-150"
+                                    class="w-full px-4 py-3 rounded-xl bg-[#21262d] text-white placeholder-gray-400 border border-[#30363d] focus:border-neon focus:ring focus:ring-neon focus:ring-opacity-50 transition duration-150"
                                     required
-                                    value="${MOCK_EMAIL}"
                                 />
                             </div>
                             <div>
@@ -79,23 +118,22 @@
                                     type="password"
                                     placeholder="Şifre"
                                     id="password"
-                                    class="w-full px-4 py-3 rounded-xl bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-150"
+                                    class="w-full px-4 py-3 rounded-xl bg-[#21262d] text-white placeholder-gray-400 border border-[#30363d] focus:border-neon focus:ring focus:ring-neon focus:ring-opacity-50 transition duration-150"
                                     required
-                                    value="${MOCK_PASSWORD}"
                                 />
                             </div>
                             ${error ? `<p id="login-error" class="text-sm text-red-400 bg-red-900/30 p-2 rounded-lg">${error}</p>` : ''}
                             <button
                                 type="submit"
                                 id="login-button"
-                                class="w-full text-white font-bold py-3 px-4 rounded-xl transition duration-200 transform hover:scale-[1.02] shadow-lg shadow-indigo-500/50 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 bg-indigo-600 hover:bg-indigo-700"
+                                class="w-full text-white font-bold py-3 px-4 rounded-xl transition duration-200 transform hover:scale-[1.02] shadow-lg shadow-neon/50 focus:outline-none focus:ring-4 focus:ring-neon focus:ring-opacity-50 bg-[#007bff] hover:bg-[#0056b3]"
                             >
                                 Giriş Yap
                             </button>
                         </form>
 
                         <p class="mt-6 text-xs text-gray-500">
-                            **DEMO:** Giriş için: ${MOCK_EMAIL} / ${MOCK_PASSWORD}
+                            Lütfen Firebase'de kayıtlı yetkili e-posta ve şifrenizi kullanın.
                         </p>
                     </div>
                 </div>
@@ -108,80 +146,143 @@
             }
         }
 
-        // 2. Yönetim Paneli (Admin Panel)
+        // 2. İstatistik Paneli (Dashboard) - Ekran görüntüsüne uygun tasarım
         function renderDashboard() {
-            const email = MOCK_EMAIL; // Kullanıcı mock olarak kabul edildi
+            const email = auth.currentUser ? auth.currentUser.email : 'admin@example.com';
             
-            const getStatusClasses = (status) => {
-                switch (status) {
-                    case 'Canlı': case 'Aktif': return 'bg-green-500 text-green-50 ring-green-500/30';
-                    case 'Taslak': return 'bg-blue-500 text-blue-50 ring-blue-500/30';
-                    case 'Sona Erdi': return 'bg-red-500 text-red-50 ring-red-500/30';
-                    default: return 'bg-gray-500 text-gray-50 ring-gray-500/30';
-                }
-            };
-
-            const activitiesHtml = mockActivities.map(activity => {
-                const iconSvg = icons[activity.icon] || '';
-                const statusCls = getStatusClasses(activity.status);
-                
-                return `
-                    <div class="flex items-center justify-between p-4 bg-white dark:bg-gray-700 rounded-xl shadow-md hover:shadow-lg transition duration-200 border-l-4 border-${activity.color}-500">
-                        <div class="flex items-center space-x-4">
-                            <div class="w-8 h-8 text-${activity.color}-500">${iconSvg}</div>
-                            <div>
-                                <p class="text-lg font-semibold text-gray-900 dark:text-white">${activity.title}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-300 mt-1">Tür: ${activity.type}</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center space-x-3">
-                            <span class="px-3 py-1 text-xs font-medium rounded-full ring-2 ${statusCls}">
-                                ${activity.status}
-                            </span>
-                            <button class="bg-indigo-500 hover:bg-indigo-600 text-white text-sm px-4 py-2 rounded-lg transition duration-150 shadow-md">
-                                Detayları Görüntüle
-                            </button>
-                        </div>
+            // Placeholder veriler
+            const stats = [
+                { title: "Toplam Katılımcı", value: "284", subtitle: "Tamamlayanlar (Ön + Son)", icon: icons.Users },
+                { title: "Ön Test Ort.", value: "7.2", subtitle: "CS-5 toplam puan", icon: icons.BarChart },
+                { title: "Son Test Ort.", value: "9.1", subtitle: "CS-5 toplam puan", icon: icons.BarChart },
+                { title: "% Artış", value: "+26%", subtitle: "Genel Farkındalık", icon: icons.TrendingUp, color: 'text-green-400' },
+            ];
+            
+            const renderStatCard = (stat) => `
+                <div class="p-4 dark-card rounded-xl shadow-lg border border-[#30363d] flex flex-col justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-400">${stat.title}</p>
+                        <h2 class="text-3xl font-bold text-white mt-1 ${stat.color || ''}">${stat.value}</h2>
                     </div>
-                `;
-            }).join('');
-
+                    <div class="mt-2 text-xs text-gray-500 flex items-center">
+                        ${stat.icon}
+                        <span class="ml-1">${stat.subtitle}</span>
+                    </div>
+                </div>
+            `;
+            
             appRoot.innerHTML = `
-                <div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-start p-4 sm:p-8">
-                    <header class="w-full max-w-5xl mb-8">
-                        <div class="flex justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-lg border-t-2 border-indigo-500">
-                            <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-                                <div class="w-6 h-6 mr-2 text-indigo-500">${icons.Zap}</div>
-                                Yönetici Paneli | Sunum Yönetimi
+                <div class="min-h-screen dark-bg flex flex-col items-center justify-start p-4 sm:p-8">
+                    
+                    <!-- Başlık ve Menü -->
+                    <header class="w-full max-w-7xl mb-6">
+                        <div class="flex justify-between items-center dark-card p-4 rounded-xl shadow-lg border border-[#30363d]">
+                            <h1 class="text-2xl font-bold text-white flex items-center">
+                                <div class="w-6 h-6 mr-2 text-neon">${icons.BarChart}</div>
+                                Siber Güvenlik Farkındalık — Admin Paneli
                             </h1>
                             <div class="flex items-center space-x-4">
-                                <span class="text-sm text-gray-600 dark:text-gray-300 hidden sm:inline">Kullanıcı: ${email}</span>
+                                <span class="text-sm text-gray-400 hidden sm:inline">${email}</span>
                                 <button
                                     id="logout-button"
-                                    class="flex items-center text-sm text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg transition duration-150 shadow-md"
+                                    class="flex items-center text-sm text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded-lg transition duration-150 shadow-md"
                                 >
                                     <div class="w-4 h-4 mr-1">${icons.LogOut}</div> Çıkış Yap
                                 </button>
                             </div>
                         </div>
+                        <nav class="text-xs text-gray-500 mt-2 ml-4">Demografi · Ön Test · Eğitim · Son Test · İstatistik · CSV Dışa Aktar</nav>
                     </header>
+                    
+                    <!-- İstatistik Kartları -->
+                    <div class="w-full max-w-7xl grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        ${stats.map(renderStatCard).join('')}
+                    </div>
 
-                    <!-- Etkinlik Yönetim Paneli Alanı -->
-                    <div class="w-full max-w-5xl p-6 sm:p-8 bg-gray-50 dark:bg-gray-800 rounded-3xl shadow-xl">
-                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 border-b pb-3 border-gray-200 dark:border-gray-700 flex items-center">
-                            <div class="w-8 h-8 mr-3 text-indigo-500">${icons.LayoutList}</div>
-                            Etkileşimli Etkinlikler Listesi
-                        </h2>
+                    <!-- Filtreleme ve Aksiyonlar -->
+                    <div class="w-full max-w-7xl dark-card p-4 rounded-xl shadow-lg border border-[#30363d] flex flex-wrap gap-3 items-center mb-8">
+                        <span class="text-gray-400 flex items-center mr-2">${icons.Filter} Filtreler:</span>
                         
-                        <div class="grid gap-6">
-                            ${activitiesHtml}
+                        <!-- Dropdown (Cinsiyet) -->
+                        <select class="bg-[#21262d] text-white p-2 rounded-lg border border-[#30363d] focus:ring-neon focus:border-neon">
+                            <option>Cinsiyet: Tümü</option>
+                            <option>Kadın</option>
+                            <option>Erkek</option>
+                        </select>
+                        
+                        <!-- Dropdown (Eğitim) -->
+                        <select class="bg-[#21262d] text-white p-2 rounded-lg border border-[#30363d] focus:ring-neon focus:border-neon">
+                            <option>Eğitim: Tümü</option>
+                            <option>Lise</option>
+                            <option>Üniversite</option>
+                        </select>
+                        
+                        <!-- Dropdown (İnternet) -->
+                        <select class="bg-[#21262d] text-white p-2 rounded-lg border border-[#30363d] focus:ring-neon focus:border-neon">
+                            <option>İnternet: Tümü</option>
+                            <option>< 1 saat</option>
+                            <option>1-3 saat</option>
+                        </select>
+                        
+                        <button class="bg-neon text-white p-2 rounded-lg font-semibold hover:bg-[#4695ff] transition duration-150 flex items-center">
+                            <div class="w-4 h-4 mr-1">${icons.Filter}</div> Filtreyi Uygula
+                        </button>
+                        
+                        <button class="bg-[#30363d] text-gray-300 p-2 rounded-lg font-semibold hover:bg-[#464c55] transition duration-150 flex items-center">
+                            <div class="w-4 h-4 mr-1">${icons.RotateCw}</div> Sıfırla
+                        </button>
+
+                        <button class="bg-green-600 text-white p-2 ml-auto rounded-lg font-semibold hover:bg-green-700 transition duration-150 flex items-center">
+                            <div class="w-4 h-4 mr-1">${icons.Download}</div> CSV Dışa Aktar
+                        </button>
+                    </div>
+
+                    <!-- Ana İçerik Alanı (Tablo ve Grafik) -->
+                    <div class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        
+                        <!-- Katılımcı Tablosu -->
+                        <div class="dark-card p-6 rounded-xl shadow-lg border border-[#30363d]">
+                            <h2 class="text-xl font-bold text-white mb-4">Katılımcı Tablosu</h2>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left text-gray-400">
+                                    <thead class="text-xs text-gray-300 uppercase bg-[#21262d]">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3">Kod</th>
+                                            <th scope="col" class="px-6 py-3">Yaş</th>
+                                            <th scope="col" class="px-6 py-3">Cinsiyet</th>
+                                            <th scope="col" class="px-6 py-3">Eğitim</th>
+                                            <th scope="col" class="px-6 py-3">İnternet</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-[#30363d]">
+                                            <td class="px-6 py-4">---</td>
+                                            <td class="px-6 py-4">---</td>
+                                            <td class="px-6 py-4">---</td>
+                                            <td class="px-6 py-4">---</td>
+                                            <td class="px-6 py-4">---</td>
+                                        </tr>
+                                        <!-- Veriler buraya Firestore'dan yüklenecek -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        
-                        <div class="mt-10 text-center">
-                            <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 flex items-center mx-auto">
-                                <div class="w-5 h-5 mr-2">${icons.Zap}</div> Yeni Etkinlik Oluştur
-                            </button>
+
+                        <!-- Ön/Son Test Karşılaştırması (Mock Grafik) -->
+                        <div class="dark-card p-6 rounded-xl shadow-lg border border-[#30363d] flex flex-col justify-between">
+                            <h2 class="text-xl font-bold text-white mb-4">Ön/Son Test Karşılaştırma</h2>
+                            <!-- Grafik Placeholder -->
+                            <div class="flex items-end justify-around h-64 bg-[#21262d] p-4 rounded-lg">
+                                <div class="w-10 bg-neon" style="height: 50%;"></div>
+                                <div class="w-10 bg-red-500" style="height: 70%;"></div>
+                            </div>
+                            <div class="flex justify-around text-sm text-gray-400 mt-2">
+                                <span>Ön</span>
+                                <span>Son</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-4 text-center">
+                                *Basit çubuk grafik mockup'ıdır. Gerçek kütüphane gereklidir.
+                            </p>
                         </div>
                     </div>
 
@@ -194,18 +295,22 @@
 
         // Ana Uygulama Render Kontrol Noktası
         function renderApp() {
+            // auth objesi oluşturulana kadar beklemek gerekebilir
+            if (!auth || typeof isLoggedIn === 'undefined') {
+                appRoot.innerHTML = `<div class="min-h-screen dark-bg text-white flex items-center justify-center"><div class="w-8 h-8 loading-spin text-neon">${icons.RotateCw}</div> <span class="ml-2">Bağlanılıyor...</span></div>`;
+                return;
+            }
+
             if (isLoggedIn) {
-                // Giriş yapılmışsa, Yönetim Panelini göster
                 renderDashboard();
             } else {
-                // Giriş yapılmamışsa, Giriş Ekranını göster
                 renderLoginScreen();
             }
         }
 
         // --- İŞLEYİCİ FONKSİYONLAR ---
 
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
             const emailInput = document.getElementById('email');
             const passwordInput = document.getElementById('password');
@@ -214,28 +319,53 @@
             const email = emailInput.value;
             const password = passwordInput.value;
             
+            if (!auth) {
+                renderLoginScreen("Hata: Firebase Auth hizmeti kullanılamıyor.");
+                return;
+            }
+
             // Butonu yükleme durumuna getir
-            loginButton.innerHTML = `<div class="w-5 h-5 loading-spin mr-2">${icons.RefreshCw}</div> Giriş Yapılıyor...`;
+            loginButton.innerHTML = `<div class="w-5 h-5 loading-spin mr-2">${icons.RotateCw}</div> Giriş Yapılıyor...`;
             loginButton.disabled = true;
 
-            // Sahte kimlik doğrulama kontrolü
-            setTimeout(() => {
-                if (email === MOCK_EMAIL && password === MOCK_PASSWORD) {
-                    isLoggedIn = true;
-                    renderApp(); 
-                } else {
-                    renderLoginScreen('Hatalı e-posta veya şifre. Lütfen tekrar deneyin.');
+            try {
+                // Firebase ile giriş yap
+                await signInWithEmailAndPassword(auth, email, password);
+                // Başarılı girişten sonra onAuthStateChanged tetiklenecek ve paneli render edecek
+            } catch (error) {
+                let errorMessage = "Giriş başarısız oldu. E-posta veya şifre hatalı.";
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = "Bu e-posta ile kayıtlı kullanıcı bulunamadı.";
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = "Şifre hatalı. Lütfen tekrar deneyin.";
                 }
-            }, 500); // Küçük bir gecikme ekleyelim
+                console.error("Firebase Giriş Hatası:", error);
+                renderLoginScreen(errorMessage);
+            }
         }
         
-        function handleLogout() {
-            isLoggedIn = false;
-            renderApp();
+        async function handleLogout() {
+            if (auth) {
+                try {
+                    await signOut(auth);
+                    // Çıkış yapıldıktan sonra onAuthStateChanged tetiklenecek
+                } catch (error) {
+                    console.error("Çıkış Hatası:", error);
+                    alert("Çıkış yapılırken bir hata oluştu."); // Geçici olarak alert kullanıldı
+                }
+            } else {
+                // Firebase yoksa manuel çıkış
+                isLoggedIn = false;
+                renderApp();
+            }
         }
 
-        // Uygulamayı başlat
-        window.onload = renderApp;
+        // DOM yüklendikten sonra uygulamayı başlat
+        document.addEventListener('DOMContentLoaded', () => {
+             // Auth durumu onAuthStateChanged listener'ı tarafından yönetilir.
+             // Eğer Firebase yoksa renderApp'i çağırırız.
+             if (!auth) renderApp();
+        });
 
     </script>
 </body>
