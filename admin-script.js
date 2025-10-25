@@ -1,16 +1,32 @@
-// admin-script.js dosyasından:
-import { auth, signInWithEmailAndPassword, db, collection, getDocs, appId } from './firebase-setup.js';
+// admin-script.js dosyasından: Bu dosya, admin girişi ve Firebase'den istatistik çekme işlemini yönetir.
 
-// HTML elementlerinin ID'leri
+// TÜM GEREKLİ MODÜLLER TEK BİR YERDEN, firebase-setup.js'DEN ALINIYOR
+import { 
+    auth, 
+    db, 
+    signInWithEmailAndPassword, 
+    onAuthStateChanged, 
+    signOut,
+    collection, 
+    getDocs 
+} from './firebase-setup.js';
+
+// HTML Elementleri - ID'leri mevcut HTML yapınıza göre ayarladım
 const loginForm = document.getElementById('login-form');
-const emailInput = document.getElementById('admin-email');
-const passwordInput = document.getElementById('admin-password');
-const loginButton = document.getElementById('login-button'); // Buton ID'si
-const errorMessageDisplay = document.getElementById('error-message'); // Hata mesajı gösterecek element ID'si
+const adminEmail = document.getElementById('admin-email');
+const adminPassword = document.getElementById('admin-password');
+const loginButton = document.getElementById('login-button'); // Canvas'taki ID
+const errorMessageDisplay = document.getElementById('error-message'); // Canvas'taki ID
+
+// Admin Panel İçeriği (HTML'inizde bu ID'lerin olması gerekir)
+const loginContainer = document.getElementById('login-container');
+const adminPanelContent = document.getElementById('admin-panel-content');
+const statsContent = document.getElementById('stats-content');
+const logoutBtn = document.getElementById('logout-btn');
+
 
 /**
- * Kullanıcıya mesaj gösterir (Hata veya Başarı)
- * Not: HTML'de 'error-message' ID'li bir elementin var olduğunu varsayar.
+ * Kullanıcıya mesaj gösterir (Tailwind CSS sınıfları ile)
  * @param {string} message - Gösterilecek mesaj.
  * @param {boolean} isError - Hata olup olmadığı.
  */
@@ -23,77 +39,155 @@ function showMessage(message, isError = true) {
     }
 }
 
-/**
- * Admin girişi işlemini yönetir.
- */
-async function handleAdminLogin(event) {
-    event.preventDefault();
 
-    // 1. Firebase Auth nesnesinin yüklendiğini kontrol et
-    if (!auth || !signInWithEmailAndPassword) {
-        showMessage("Hata: Firebase Auth modülleri tam yüklenemedi. setup.js dosyasını kontrol edin.", true);
-        console.error("DEBUG: Firebase Auth nesnesi (auth) yüklenemedi!");
+// Veritabanından İstatistikleri Çekme ve Hesaplama
+async function fetchStats() {
+    statsContent.innerHTML = 'İstatistikler yükleniyor...';
+    
+    // Auth nesnesinin yüklendiğini kontrol et (Fazladan güvenlik)
+    if (!auth) {
+        statsContent.innerHTML = '<p style="color: red;">Firebase Auth Başlatılamadı.</p>';
         return;
     }
 
-    const email = emailInput.value;
-    const password = passwordInput.value;
-    
-    // UI Güncelleme
-    if (loginButton) {
-        loginButton.innerHTML = 'Giriş Yapılıyor...';
-        loginButton.disabled = true;
-    }
-    showMessage("Giriş yapılıyor...", false);
-
     try {
-        // Auth işlemi
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        // "test_results" koleksiyonundan tüm belgeleri çek
+        const querySnapshot = await getDocs(collection(db, "test_results"));
         
-        // Başarılı giriş
-        showMessage("Giriş başarılı! Admin Paneli yükleniyor...", false);
-        console.log("Giriş başarılı:", userCredential.user.uid);
-
-        // UI'ı gizle ve paneli göster (HTML'inizdeki ID'lere göre)
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('admin-panel-content').style.display = 'block';
-
-        // Verileri yüklemeye başla (Eğer admin.html'de veri yükleme fonksiyonunuz varsa)
-        // loadAdminData(); // Bu fonksiyonu başka bir yerde tanımlamanız gerekebilir.
-
+        const results = [];
+        querySnapshot.forEach((doc) => {
+            results.push(doc.data());
+        });
+        
+        displayStats(results); 
+        
     } catch (error) {
-        console.error("Firebase Giriş Hatası:", error);
-
-        // Butonu eski haline getir
-        if (loginButton) {
-            loginButton.innerHTML = 'Giriş Yap';
-            loginButton.disabled = false;
-        }
-
-        let userMessage = "Giriş başarısız oldu. Lütfen e-posta ve şifrenizi kontrol edin.";
-
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-            userMessage = "E-posta veya şifre hatalı.";
-        } else if (error.code === 'auth/invalid-email') {
-            userMessage = "Geçersiz e-posta formatı.";
-        } else if (error.code === 'auth/network-request-failed') {
-            userMessage = "Ağ bağlantı hatası. İnternet bağlantınızı kontrol edin.";
-        } else if (error.code === 'auth/unauthorized-domain') {
-            userMessage = "Firebase Auth, bu alan adından gelen isteklere izin vermiyor. Proje ayarlarını kontrol edin.";
-        }
-        
-        showMessage(`Giriş Hatası: ${userMessage}`, true);
+        console.error("Veri çekme hatası:", error);
+        statsContent.innerHTML = '<p class="text-red-500">Veri çekilirken bir hata oluştu. Güvenlik kurallarını kontrol edin.</p>';
     }
 }
 
-// Giriş formuna dinleyici ekleme
+
+// İstatistikleri Ekranda Gösterme
+function displayStats(results) {
+    if (results.length === 0) {
+        statsContent.innerHTML = '<p class="text-gray-500">Henüz hiçbir test sonucu kaydedilmemiş.</p>';
+        return;
+    }
+    
+    const totalTests = results.length;
+    let totalScoreSum = 0;
+
+    results.forEach(result => {
+        totalScoreSum += result.totalScore || 0; // totalScore'un varlığını kontrol et
+    });
+
+    const averageScore = (totalScoreSum / totalTests).toFixed(2);
+    // Maksimum puanı 7 soru * 7 puan = 49 varsayalım
+    const maxScore = 49; 
+    
+    statsContent.innerHTML = `
+        <div class="space-y-4">
+            <h3 class="text-xl font-bold border-b pb-2">Genel Bakış</h3>
+            <p><strong>Toplam Yapılan Test Sayısı:</strong> ${totalTests}</p>
+            <p><strong>Ortalama Puan:</strong> ${averageScore} / ${maxScore}</p>
+            
+            <h3 class="text-xl font-bold border-b pb-2 pt-6">Tüm Kayıtlar</h3>
+            <ul class="space-y-2">
+                ${results.map(r => {
+                    const date = r.timestamp ? new Date(r.timestamp.seconds * 1000).toLocaleString('tr-TR') : 'Yükleniyor';
+                    return `
+                        <li class="border-b border-gray-200 pb-2">
+                            <span class="font-semibold text-lg text-blue-600">Puan: ${r.totalScore}</span> 
+                            <span class="text-gray-500">(Tarih: ${date})</span>
+                        </li>
+                    `;
+                }).join('')}
+            </ul>
+        </div>
+    `;
+}
+
+/**
+ * Admin Giriş İşlemi
+ */
+async function handleAdminLogin(email, password) {
+    if (!loginButton) return;
+
+    loginButton.innerHTML = 'Giriş Yapılıyor...';
+    loginButton.disabled = true;
+    showMessage("Giriş yapılıyor...", false);
+    
+    try {
+        // Auth işlemi
+        await signInWithEmailAndPassword(auth, email, password);
+        // Başarılı girişten sonra onAuthStateChanged tetiklenecektir.
+    } catch (error) {
+        console.error("Firebase Giriş Hatası:", error);
+
+        loginButton.innerHTML = 'Giriş Yap';
+        loginButton.disabled = false;
+
+        let userMessage = "Giriş başarısız oldu. Lütfen e-posta ve şifrenizi kontrol edin.";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            userMessage = "E-posta veya şifre hatalı.";
+        }
+        
+        showMessage(`Hata: ${userMessage}`, true);
+    }
+}
+
+
+// Çıkış İşlemi
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+        await signOut(auth);
+        showMessage("Başarıyla çıkış yapıldı.", false);
+    });
+}
+
+
+// Kimlik Doğrulama Durumu Değiştiğinde (Ana Uygulama Akışı)
 document.addEventListener('DOMContentLoaded', () => {
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleAdminLogin);
-    } else if (loginButton) {
-        // Eğer form yoksa, butona direkt dinleyici ekleyelim
-        loginButton.addEventListener('click', handleAdminLogin);
+    // 1. Auth Durumu Dinleyicisi
+    if (auth) {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Kullanıcı Giriş Yaptı (Admin)
+                if (loginContainer) loginContainer.style.display = 'none';
+                if (adminPanelContent) adminPanelContent.style.display = 'block';
+                showMessage(`Hoş geldiniz, Admin (${user.email})!`, false);
+                fetchStats(); // İstatistikleri çekmeye başla
+            } else {
+                // Kullanıcı Çıkış Yaptı
+                if (loginContainer) loginContainer.style.display = 'block';
+                if (adminPanelContent) adminPanelContent.style.display = 'none';
+                statsContent.innerHTML = '<p class="text-gray-500">İstatistikleri görmek için lütfen giriş yapın.</p>';
+                showMessage('Lütfen giriş yapın.', false);
+            }
+            // Butonu tekrar etkinleştir
+            if (loginButton) {
+                loginButton.innerHTML = 'Giriş Yap';
+                loginButton.disabled = false;
+            }
+        });
     } else {
-        console.error("Hata: Admin panelinde ne 'login-form' ne de 'login-button' ID'li element bulundu. Lütfen ID'leri kontrol edin.");
+        showMessage("KRİTİK HATA: Firebase Auth nesnesi yüklenemedi. 'firebase-setup.js' dosyasını kontrol edin.", true);
+    }
+    
+    // 2. Giriş Formu Dinleyicisi
+    const submitHandler = (e) => {
+        e.preventDefault();
+        const email = adminEmail ? adminEmail.value : '';
+        const password = adminPassword ? adminPassword.value : '';
+        handleAdminLogin(email, password);
+    };
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', submitHandler);
+    } else if (loginButton) {
+        loginButton.addEventListener('click', submitHandler);
+    } else {
+        console.error("Hata: Admin panelinde giriş mekanizması (form veya buton) bulunamadı.");
     }
 });
