@@ -13,12 +13,13 @@ const firebaseConfig = {
 
 // Gerekli Firebase Modüllerini Yükleme (Tüm Modüller Tek Bir Yerde Toplandı)
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js';
+
 // firebase-setup.js içindeki import satırı (eski)
 // import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, runTransaction } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
 
 // firebase-setup.js içindeki import satırı (YENİ VE EKSİKLERİ TAMAMLAYAN)
-import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, runTransaction, updateDoc, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
-import { getAuth } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
+import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, runTransaction, updateDoc, query, where, getDocs, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
+import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
 
 
 // Firebase'i Başlatma
@@ -29,7 +30,7 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 
 
-/**
+/**a
  * Test sonuçlarını Firestore veritabanına kaydeder.
  * @param {string} testType - 'pre' (ön test) veya 'post' (son test)
  * @param {object} answers - Kullanıcının tüm cevapları
@@ -80,6 +81,15 @@ export async function updateVisitorCount(shouldIncrement) {
         // Sadece okuma modu
         try {
             const docSnap = await getDoc(counterRef);
+            
+            // *** YENİ: Hata Ayıklama Ekleme ***
+            if (!docSnap.exists()) {
+                console.warn("UYARI: Sayaç belgesi (meta/visitor_count) henüz mevcut değil. Sıfır döndürülüyor.");
+            } else if (typeof docSnap.data().count !== 'number') {
+                 console.error("HATA: Sayaç değeri ('count') Firestore'da sayı (number) tipinde değil. Tip kontrolü yapın!");
+            }
+            // *** SON ***
+
             return docSnap.exists() ? docSnap.data().count : 0;
         } catch (e) {
             // Hata durumunda bile 0 göster
@@ -88,3 +98,46 @@ export async function updateVisitorCount(shouldIncrement) {
         }
     }
 }
+
+/**
+ * Ziyaretçi sayacını manuel olarak belirli bir değere ayarlar.
+ * @param {number} newCount - Sayaç için ayarlanacak yeni değer.
+ */
+export async function setVisitorCountManually(newCount) {
+    if (typeof newCount !== 'number' || newCount < 0) {
+        console.error("Hata: Sayaç değeri geçerli bir pozitif sayı olmalıdır.");
+        return false;
+    }
+    const counterRef = doc(db, "meta", "visitor_count");
+    try {
+        await setDoc(counterRef, { count: newCount });
+        console.log(`Sayaç değeri başarıyla ${newCount} olarak ayarlandı.`);
+        return true;
+    } catch (e) {
+        console.error("Sayaç manuel ayarlama hatası:", e);
+        return false;
+    }
+}
+
+
+// *** Sadece Admin Paneli için EKLENEN GEREKLİ DIŞA AKTARMALAR ***
+// Bu, auth ve veritabanı işlemlerinin admin-script.js'te kullanılmasını sağlar.
+
+export {
+    // Admin girişi için zorunlu olan fonksiyon
+    signInWithEmailAndPassword 
+} from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
+
+export {
+    collection, 
+    query, 
+    getDocs, 
+    where, 
+    doc,
+    deleteDoc // Bu satır daha önce altta bir kez daha tekrar ediyordu, şimdi yalnızca burada (Firestore import'u içinde) tutuluyor.
+} from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
+
+// Eğer Admin panelinde appId kullanılıyorsa, onu da dışa aktaralım
+// const appId değişkeni tanımlı olmadığı için (sadece bu ortamda tanımlı), admin panelinde path oluşturmak için 
+// bu ortam değişkenini simüle edelim veya elle bir ID kullanalım. 
+export const appId = "default-app-id";
