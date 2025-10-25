@@ -13,15 +13,14 @@ import {
     where
 } from './firebase-setup.js';
 
-// HTML Elementleri - ID'leri mevcut HTML yapınıza göre ayarladım
-// DİKKAT: loginBtn yerine loginButton ve loginError yerine errorMessageDisplay kullanıldı.
+// HTML Elementleri (admin.html dosyasındaki ID'ler ile %100 uyumlu olmalıdır)
 const loginForm = document.getElementById('login-form');
 const adminEmail = document.getElementById('admin-email');
 const adminPassword = document.getElementById('admin-password');
-const loginButton = document.getElementById('login-button'); // Giriş Butonu ID'si
-const errorMessageDisplay = document.getElementById('error-message'); // Hata Mesajı ID'si
+const loginButton = document.getElementById('login-button'); 
+const errorMessageDisplay = document.getElementById('error-message'); 
 
-// Admin Panel İçeriği (HTML'inizde bu ID'lerin olması gerekir)
+// Admin Panel İçeriği
 const loginContainer = document.getElementById('login-container');
 const adminPanelContent = document.getElementById('admin-panel-content');
 const statsContent = document.getElementById('stats-content');
@@ -29,15 +28,15 @@ const logoutBtn = document.getElementById('logout-btn');
 
 
 /**
- * Kullanıcıya mesaj gösterir (Tailwind CSS sınıfları ile)
- * NOT: Bu fonksiyon, Hata 2'yi ('Cannot set properties of null') önlemek için 
- * errorMessageDisplay elementini kontrol eder.
+ * Hata veya bilgi mesajlarını gösterir.
  * @param {string} message - Gösterilecek mesaj.
- * @param {boolean} isError - Hata olup olmadığı.
+ * @param {boolean} isError - Hata olup olmadığı (true = kırmızı, false = yeşil).
  */
 function showMessage(message, isError = true) {
     if (errorMessageDisplay) {
         errorMessageDisplay.textContent = message;
+        errorMessageDisplay.style.display = 'block';
+        // Tailwind CSS sınıflarını güncelleyerek rengini ayarlar
         errorMessageDisplay.className = `mt-4 p-3 rounded text-center font-semibold ${isError ? 'bg-red-800 text-white' : 'bg-green-600 text-white'}`;
     } else {
         console.error("Hata mesajı görüntüleme elementi (error-message) bulunamadı:", message);
@@ -55,7 +54,6 @@ async function fetchStats() {
     }
 
     try {
-        // "test_results" koleksiyonundan tüm belgeleri çek
         const querySnapshot = await getDocs(collection(db, "test_results"));
         
         const results = [];
@@ -85,12 +83,11 @@ function displayStats(results) {
     let totalScoreSum = 0;
 
     results.forEach(result => {
-        totalScoreSum += result.totalScore || 0; // totalScore'un varlığını kontrol et
+        totalScoreSum += result.totalScore || 0; 
     });
 
     const averageScore = (totalScoreSum / totalTests).toFixed(2);
-    // Maksimum puanı 7 soru * 7 puan = 49 varsayalım
-    const maxScore = 49; 
+    const maxScore = 49; // 7 soru * 7 puan
     
     statsContent.innerHTML = `
         <div class="space-y-4">
@@ -101,13 +98,12 @@ function displayStats(results) {
             <h3 class="text-xl font-bold border-b pb-2 pt-6">Tüm Kayıtlar</h3>
             <ul class="space-y-2">
                 ${results.map(r => {
-                    // Firestore timestamp'ten doğru tarih formatı
                     const date = r.timestamp && r.timestamp.seconds 
                         ? new Date(r.timestamp.seconds * 1000).toLocaleString('tr-TR') 
                         : 'Yükleniyor';
                     return `
                         <li class="border-b border-gray-200 pb-2">
-                            <span class="font-semibold text-lg text-blue-600">Puan: ${r.totalScore}</span> 
+                            <span class="font-semibold text-lg text-blue-400">Puan: ${r.totalScore || 'N/A'}</span> 
                             <span class="text-gray-500">(Tarih: ${date})</span>
                         </li>
                     `;
@@ -128,7 +124,6 @@ async function handleAdminLogin(email, password) {
     showMessage("Giriş yapılıyor...", false);
     
     try {
-        // Auth işlemi
         await signInWithEmailAndPassword(auth, email, password);
         // Başarılı girişten sonra onAuthStateChanged tetiklenecektir.
     } catch (error) {
@@ -139,7 +134,7 @@ async function handleAdminLogin(email, password) {
 
         let userMessage = "Giriş başarısız oldu. Lütfen e-posta ve şifrenizi kontrol edin.";
         
-        // Firebase Auth Hata Kodlarını Türkçe'ye çeviriyoruz
+        // Firebase Auth Hata Kodları Kontrolü
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
             userMessage = "E-posta veya şifre hatalı.";
         } else if (error.code === 'auth/invalid-email') {
@@ -154,7 +149,7 @@ async function handleAdminLogin(email, password) {
 // Çıkış İşlemi
 if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
-        await signOut(auth);
+        if(auth) await signOut(auth);
         showMessage("Başarıyla çıkış yapıldı. Lütfen tekrar giriş yapın.", false);
     });
 }
@@ -166,21 +161,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (auth) {
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Kullanıcı Giriş Yaptı (Admin)
+                // Giriş Başarılı
                 if (loginContainer) loginContainer.style.display = 'none';
                 if (adminPanelContent) adminPanelContent.style.display = 'block';
-                // E-posta adresi null gelme ihtimaline karşı kontrol
                 const userEmail = user.email || 'Bilinmeyen Kullanıcı';
                 showMessage(`Hoş geldiniz, Admin (${userEmail})!`, false);
-                fetchStats(); // İstatistikleri çekmeye başla
+                fetchStats(); 
             } else {
-                // Kullanıcı Çıkış Yaptı
+                // Çıkış Yapıldı
                 if (loginContainer) loginContainer.style.display = 'block';
                 if (adminPanelContent) adminPanelContent.style.display = 'none';
                 if (statsContent) statsContent.innerHTML = '<p class="text-gray-500">İstatistikleri görmek için lütfen giriş yapın.</p>';
                 showMessage('Lütfen giriş yapın.', false);
             }
-            // Butonu tekrar etkinleştir
+            // Buton durumunu sıfırla
             if (loginButton) {
                 loginButton.innerHTML = 'Giriş Yap';
                 loginButton.disabled = false;
@@ -196,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = adminEmail ? adminEmail.value : '';
         const password = adminPassword ? adminPassword.value : '';
         
-        // Basit boş alan kontrolü
         if (!email || !password) {
             showMessage("Lütfen e-posta ve şifrenizi giriniz.", true);
             return;
@@ -205,15 +198,16 @@ document.addEventListener('DOMContentLoaded', () => {
         handleAdminLogin(email, password);
     };
 
-    // Giriş formunu veya butonu dinleme
+    // Formu dinleme (Form submit edildiğinde)
     if (loginForm) {
         loginForm.addEventListener('submit', submitHandler);
-    } else if (loginButton) {
-        // Eğer HTML'de sadece butona ID verilmişse (formsuz kullanım için)
-        loginButton.addEventListener('click', submitHandler);
     } else {
-        // Hata: Admin Panelinde Giriş Elementleri Bulunamadı (image_cb2be1.png hatası)
-        console.error("HATA: Admin panelinde giriş mekanizması (loginForm veya loginButton) bulunamadı. Lütfen ID'leri kontrol edin.");
-        showMessage("HATA: Giriş elementleri HTML'de bulunamadı. ID'leri kontrol edin.", true);
+        console.error("HATA: Admin panelinde giriş formu (login-form) bulunamadı. admin.html dosyasını kontrol edin.");
+        // Eğer form yoksa ve sadece butona güveniyorsak:
+        if (loginButton) {
+            loginButton.addEventListener('click', (e) => { e.preventDefault(); submitHandler(e); });
+        } else {
+            showMessage("KRİTİK HATA: Giriş elementleri HTML'de bulunamadı. ID'leri kontrol edin.", true);
+        }
     }
 });
