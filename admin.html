@@ -1,736 +1,201 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Siber Güvenlik Projesi — Admin Paneli</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siber Güvenlik Farkındalık - Admin Paneli</title>
+    <!-- Tailwind CSS CDN (Estetik için kullanıyoruz) -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Sizin sağladığınız stil ayarları */
-        :root{
-            --bg:#0f172a;       /* slate-900 */
-            --panel:#111827;    /* gray-900 */
-            --muted:#94a3b8;    /* slate-400 */
-            --text:#e5e7eb;     /* gray-200 */
-            --accent:#22c55e;   /* green-500 */
-            --accent2:#38bdf8;  /* sky-400 */
-            --danger:#ef4444;   /* red-500 */
-            --card:#0b1220;     /* custom */
-            --table:#0b1324;
-            --border:#1f2937;
-        }
-        * { box-sizing: border-box; transition: background-color 0.2s, border-color 0.2s; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
-            margin:0;
-            background:linear-gradient(180deg,#0b1020, #0f172a);
-            color:var(--text);
-            font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Helvetica Neue',Arial;
-            line-height:1.45;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* Genel Yönetim Paneli Stilleri */
-        header{
-            position:sticky;top:0;
-            background:rgba(15,23,42,.8);
-            backdrop-filter: blur(8px);
-            border-bottom:1px solid var(--border);
-            z-index:10;
-        }
-        .wrap{max-width:1100px;margin:auto;padding:18px}
-        h1{margin:0;font-size:20px;letter-spacing:.3px}
-        .sub{color:var(--muted);font-size:13px;margin-top:2px}
-        .grid{
-            display:grid;gap:14px;
-            grid-template-columns:repeat(12,1fr);
-        }
-        .card{
-            background:linear-gradient(180deg,#0b1220,#0e1530);
-            border:1px solid var(--border);
-            border-radius:12px;padding:14px;
-            box-shadow: 0 10px 30px rgba(0,0,0,.25) inset, 0 4px 20px rgba(0,0,0,.2);
-        }
-        .kpi{display:flex;flex-direction:column;gap:6px}
-        .kpi .label{font-size:12px;color:var(--muted)}
-        .kpi .value{font-size:22px;font-weight:700}
-        .kpi .badge{font-size:12px;color:var(--accent);background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);padding:2px 8px;border-radius:999px}
-        .kpi .badge.neg{color:var(--danger);background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.35)}
-        .kpi .hint{font-size:12px;color:var(--muted)}
-        .span-3{grid-column:span 3}
-        .span-6{grid-column:span 6}
-        .span-12{grid-column:span 12}
-        @media (max-width:900px){.span-3,.span-6{grid-column:span 12}}
-
-        .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-        select,button,input[type="text"]{
-            background:#0b1324;color:var(--text);
-            border:1px solid var(--border);
-            border-radius:10px;padding:10px 12px;
-            font-size:14px;outline:none;
-        }
-        button{cursor:pointer}
-        button.primary{background:linear-gradient(90deg,#2563eb,#06b6d4);border:none; color:white; font-weight: 600;}
-        button.ghost{background:transparent;border:1px dashed var(--border)}
-        .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}
-        table{width:100%;border-collapse:collapse;min-width:900px;background:var(--table)}
-        th,td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:14px}
-        th{position:sticky;top:0;background:#0a1222;text-align:left}
-        tr:hover td{background:rgba(56,189,248,.05)}
-        .right{text-align:right}
-        .muted{color:var(--muted)}
-        .pill{font-size:12px;background:#0b1a2c;padding:3px 8px;border:1px solid var(--border);border-radius:999px}
-        .footer{color:var(--muted);font-size:12px;margin-top:12px}
-        canvas{width:100%;height:220px;display:block}
-        .warn{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.3);padding:8px 10px;border-radius:8px;font-size:13px}
-        .ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);padding:8px 10px;border-radius:8px;font-size:13px}
-        .err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);padding:8px 10px;border-radius:8px;font-size:13px}
-        .split{display:flex;gap:14px;flex-wrap:wrap}
-        .split > *{flex:1 1 320px}
-        code.inline{background:#0b1324;padding:2px 6px;border-radius:6px;border:1px solid var(--border)}
-
-        /* Giriş Sayfası Stilleri (Yeni Eklendi) */
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a2e; /* Koyu Mavi Arkaplan */
+            color: #ffffff;
             min-height: 100vh;
         }
-        .login-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 40px;
+        .card {
+            background-color: #2c2c48;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,.3);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
         }
-        .login-card h2 {
-            font-size: 24px;
-            margin-bottom: 30px;
-            color: var(--text);
-            border-bottom: 2px solid var(--accent2);
-            padding-bottom: 10px;
+        .input-field {
+            background-color: #1a1a2e;
+            border: 1px solid #4a4a7a;
+            color: white;
         }
-        .login-card input[type="email"], .login-card input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            background: var(--table);
-            border: 1px solid var(--border);
-            color: var(--text);
-            outline: none;
+        /* Tablo Stilleri */
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
         }
-        .login-card button {
-            width: 100%;
-            font-size: 16px;
-            padding: 12px;
-            margin-top: 10px;
+        th {
+            background-color: #3b3b64;
+            color: #a0a0ff;
         }
-        .loading-spin { 
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, .3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        /* KPI renkleri */
+        .kpi-title {
+            color: #a0a0ff;
+            font-weight: 500;
         }
-
     </style>
 </head>
 <body>
 
-    <div id="app-root">
-        <!-- Uygulama İçeriği (Giriş veya Panel) buraya yüklenecek -->
-    </div>
-
-<!-- Firebase Kütüphaneleri -->
-<script type="module">
-    // --- EVRENSEL DEĞİŞKENLER (Canvas Ortamından) ---
-    // Canvas ortamında otomatik sağlanan konfigürasyon ve kimlik doğrulama belirteci.
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-    const COLLECTION = "veliler"; // Firestore'da kullanıcı verilerinin toplandığı varsayılan koleksiyon adı
-
-    // ======= KULLANICI AYARI (Firebase Projenizin Bilgileri) =======
-    // EĞER Canvas ortamında değilseniz, bu kısmı kendi projenizin bilgileriyle doldurun.
-    // Aksi takdirde, üstteki __firebase_config kullanılır.
-    const customFirebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        // ... diğer ayarlar
-    };
-    
-    // Eğer Canvas config'i boşsa, custom config'i kullan.
-    const config = Object.keys(firebaseConfig).length > 0 ? firebaseConfig : customFirebaseConfig;
-    // ===============================================================
-
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    setLogLevel('Debug');
-    
-    let app, db, auth;
-    let isLoggedIn = false;
-    const appRoot = document.getElementById('app-root');
-
-    // Basit state
-    let RAW = [];     // Firestore'dan gelen ham kayıtlar
-    let VIEW = [];    // Filtrelenmiş görünüm
-    
-    // --- UTILITY FONKSİYONLARI ---
-
-    function number(v, def=0){ v = Number(v); return Number.isFinite(v)?v:def; }
-    function mean(arr){ if(!arr.length) return 0; return arr.reduce((a,b)=>a+b,0)/arr.length; }
-    function format(n){ return Number.isFinite(n)? n.toFixed(2) : "—"; }
-    function pct(a,b){ if(b===0) return 0; return ( (a-b)/b*100 ); }
-
-    function toast(msg, type="ok"){
-        const el = document.getElementById("status");
-        if(el) {
-            el.className = type;
-            el.textContent = msg;
-        }
-    }
-    
-    // --- AUTH VE INITIALIZATION ---
-
-    function initFirebase() {
-        try {
-            if (config && config.projectId && config.projectId !== "YOUR_PROJECT_ID") {
-                app = initializeApp(config);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                
-                // Auth durumunu dinle
-                onAuthStateChanged(auth, async (user) => {
-                    isLoggedIn = !!user;
-                    renderApp();
-                    if (isLoggedIn) {
-                        toast(`Giriş yapıldı: ${user.email}`, "ok");
-                        // Giriş başarılı olduktan sonra verileri otomatik yükle
-                        await loadFromFirebase();
-                    } else {
-                        toast("Çıkış yapıldı.", "ok");
-                    }
-                });
-                
-                // Custom token ile anonim/varsayılan giriş
-                if (initialAuthToken) {
-                    signInWithCustomToken(auth, initialAuthToken).catch(error => {
-                        console.error("Custom Token ile giriş hatası:", error);
-                        renderApp();
-                    });
-                }
-            } else {
-                 console.warn("Firebase yapılandırması eksik veya varsayılan değerde. Giriş sadece mock veri yüklemesi için kullanılabilir.");
-                 // Firebase yoksa, anonim kal
-                 isLoggedIn = false;
-                 renderApp();
-            }
-        } catch(e) {
-            console.error("Firebase başlatılamadı:", e);
-            renderApp();
-        }
-    }
-
-    // --- RENDER FONKSİYONLARI ---
-
-    // 1. Giriş Sayfası (Login Screen)
-    function renderLoginScreen(error = '') {
-        appRoot.innerHTML = `
-            <div class="login-container">
-                <div class="login-card">
-                    <h2>Admin Girişi</h2>
-                    <form id="login-form">
-                        <input type="email" placeholder="E-posta" id="email" required />
-                        <input type="password" placeholder="Şifre" id="password" required />
-                        ${error ? `<p class="err" style="margin-bottom:15px">${error}</p>` : ''}
-                        <button type="submit" id="login-button" class="primary">Giriş Yap</button>
-                    </form>
-                    <p class="muted" style="margin-top:20px; font-size:12px;">Yetkili Firebase hesabınızı kullanın.</p>
-                </div>
-            </div>
-        `;
+    <div class="p-6 md:p-10">
         
-        const form = document.getElementById('login-form');
-        if (form) {
-            form.addEventListener('submit', handleLogin);
-        }
-    }
+        <!-- Hata Mesaj Alanı -->
+        <div id="errorMessage" class="mb-6">
+            <!-- Hata mesajları buraya gelecek -->
+        </div>
 
-    // 2. İstatistik Paneli (Dashboard)
-    function renderDashboard() {
-        const userEmail = auth && auth.currentUser ? auth.currentUser.email : 'Yönetici';
-
-        appRoot.innerHTML = `
-            <header>
-                <div class="wrap" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <h1>Siber Güvenlik Farkındalık — <span style="font-weight:600">Admin Paneli</span></h1>
-                        <div class="sub">Demografi • Ön Test • Eğitim • Son Test • İstatistik • CSV Dışa Aktar</div>
-                    </div>
-                    <button id="logout-button" class="ghost" style="border-color: var(--danger); color: var(--danger); padding: 8px 12px;">
-                        Çıkış Yap (${userEmail})
-                    </button>
+        <!-- LOGIN CONTAINER (Admin Girişi) -->
+        <div id="loginContainer" class="max-w-md mx-auto card p-8 my-20">
+            <h1 class="text-3xl font-bold mb-6 text-center text-indigo-400">Admin Girişi</h1>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1">E-posta Adresi</label>
+                    <input type="email" id="email" name="email" required class="w-full p-3 input-field rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Şifre</label>
+                    <input type="password" id="password" name="password" required class="w-full p-3 input-field rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                
+                <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors shadow-lg">
+                    Giriş Yap
+                </button>
+                <p class="text-sm text-center text-gray-400 mt-4">Firebase Auth'ta tanımlı bir kullanıcı ile giriş yapılmalıdır.</p>
+            </form>
+        </div>
+
+        <!-- DASHBOARD CONTAINER (Yönetim Paneli) -->
+        <div id="dashboardContainer" class="hidden">
+            <header class="flex justify-between items-center pb-6 border-b border-gray-700 mb-6">
+                <h1 class="text-4xl font-extrabold text-indigo-300">Siber Farkındalık Admin Paneli</h1>
+                <button id="logoutButton" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors">
+                    Çıkış Yap
+                </button>
             </header>
 
-            <main class="wrap" style="padding-top:16px">
-                <section class="grid">
-                    <div class="card span-3 kpi">
-                        <div class="label">Toplam Katılımcı</div>
-                        <div class="value" id="kpiCount">—</div>
-                        <div class="hint">Tamamlayanlar (ön + son)</div>
+            <!-- KPI'lar (Ana Performans Göstergeleri) -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="card p-5">
+                    <p class="kpi-title">Toplam Katılımcı</p>
+                    <p id="totalParticipants" class="text-3xl font-bold mt-1">—</p>
+                    <p class="text-sm text-gray-400">Veri tabanındaki tüm kayıtlar</p>
+                </div>
+                <div class="card p-5">
+                    <p class="kpi-title">Ön Test Ort.</p>
+                    <p id="preTestAvg" class="text-3xl font-bold text-blue-400 mt-1">—</p>
+                    <p class="text-sm text-gray-400">Tamamlanan testlerin ortalaması</p>
+                </div>
+                <div class="card p-5">
+                    <p class="kpi-title">Son Test Ort.</p>
+                    <p id="postTestAvg" class="text-3xl font-bold text-yellow-400 mt-1">—</p>
+                    <p class="text-sm text-gray-400">Tamamlanan testlerin ortalaması</p>
+                </div>
+                <div class="card p-5">
+                    <p class="kpi-title">% Puan Artışı</p>
+                    <p id="percentIncrease" class="text-3xl font-bold text-green-400 mt-1">—</p>
+                    <p class="text-sm text-gray-400">Ortalama artış yüzdesi</p>
+                </div>
+            </div>
+
+            <!-- Filtreleme ve Dışa Aktarma -->
+            <div class="card p-5 mb-8 flex flex-wrap gap-4 items-end">
+                <h2 class="text-xl font-semibold w-full mb-3 text-indigo-400">Veri Filtreleme</h2>
+                
+                <div class="flex-1 min-w-[150px]">
+                    <label for="cinsiyetFilter" class="block text-sm font-medium text-gray-300 mb-1">Cinsiyet</label>
+                    <select id="cinsiyetFilter" class="w-full p-2 input-field rounded-lg">
+                        <option>Tümü</option>
+                        <option>Erkek</option>
+                        <option>Kadın</option>
+                        <option>Belirtilmemiş</option>
+                    </select>
+                </div>
+
+                <div class="flex-1 min-w-[150px]">
+                    <label for="egitimFilter" class="block text-sm font-medium text-gray-300 mb-1">Eğitim Durumu</label>
+                    <select id="egitimFilter" class="w-full p-2 input-field rounded-lg">
+                        <option>Tümü</option>
+                        <option>İlk/Orta Okul</option>
+                        <option>Lise</option>
+                        <option>Üniversite</option>
+                        <option>Lisansüstü</option>
+                        <option>Belirtilmemiş</option>
+                    </select>
+                </div>
+
+                <div class="flex-1 min-w-[150px]">
+                    <label for="internetFilter" class="block text-sm font-medium text-gray-300 mb-1">İnternet Kullanımı</label>
+                    <select id="internetFilter" class="w-full p-2 input-field rounded-lg">
+                        <option>Tümü</option>
+                        <option>0-2 saat</option>
+                        <option>2-5 saat</option>
+                        <option>5+ saat</option>
+                        <option>Belirtilmemiş</option>
+                    </select>
+                </div>
+                
+                <button id="applyFiltersButton" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors">
+                    Filtreleri Uygula
+                </button>
+                <button id="resetFiltersButton" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors">
+                    Sıfırla
+                </button>
+                <button id="csvExportButton" class="ml-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors">
+                    CSV İndir
+                </button>
+            </div>
+
+            <!-- Tablo ve Grafik Alanı -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Katılımcı Tablosu -->
+                <div class="card lg:col-span-2 p-5">
+                    <h2 class="text-xl font-semibold mb-4 text-indigo-400">Katılımcı Verileri</h2>
+                    <div class="table-container">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr>
+                                    <th>Kullanıcı Kodu</th>
+                                    <th>Yaş</th>
+                                    <th>Cinsiyet</th>
+                                    <th>Eğitim</th>
+                                    <th>İnternet Süresi</th>
+                                    <th>Ön Puan</th>
+                                    <th>Son Puan</th>
+                                    <th>Fark</th>
+                                </tr>
+                            </thead>
+                            <tbody id="participantsTableBody">
+                                <!-- Veriler buraya admin-script.js tarafından eklenecek -->
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="card span-3 kpi">
-                        <div class="label">Ön Test Ort.</div>
-                        <div class="value" id="kpiPre">—</div>
-                        <div class="hint">CS‑S toplam puan</div>
+                </div>
+
+                <!-- Grafik Alanı (Test Karşılaştırma) -->
+                <div class="card p-5 lg:col-span-1">
+                    <h2 class="text-xl font-semibold mb-4 text-indigo-400">Test Karşılaştırma Grafiği</h2>
+                    <div id="testComparisonChart" class="flex justify-around items-end h-64 mt-4">
+                        <!-- Çubuk grafik buraya admin-script.js tarafından eklenecek -->
                     </div>
-                    <div class="card span-3 kpi">
-                        <div class="label">Son Test Ort.</div>
-                        <div class="value" id="kpiPost">—</div>
-                        <div class="hint">CS‑S toplam puan</div>
-                    </div>
-                    <div class="card span-3 kpi">
-                        <div class="label">% Artış</div>
-                        <div class="value" id="kpiInc">—</div>
-                        <span id="kpiBadge" class="badge" style="display:inline-block;max-width:max-content">—</span>
-                    </div>
-
-                    <div class="card span-12">
-                        <div class="toolbar">
-                            <div class="pill">Filtreler</div>
-                            <select id="fGender">
-                                <option value="">Cinsiyet: Tümü</option>
-                                <option>Kadın</option>
-                                <option>Erkek</option>
-                                <option>Belirtmek istemiyorum</option>
-                            </select>
-                            <select id="fEdu">
-                                <option value="">Eğitim: Tümü</option>
-                                <option>İlkokul</option>
-                                <option>Ortaokul</option>
-                                <option>Lise</option>
-                                <option>ÖnLisans</option>
-                                <option>Lisans</option>
-                                <option>Lisansüstü</option>
-                            </select>
-                            <select id="fInternet">
-                                <option value="">İnternet: Tümü</option>
-                                <option>≤1 saat/gün</option>
-                                <option>1-2 saat/gün</option>
-                                <option>3-5 saat/gün</option>
-                                <option>≥6 saat/gün</option>
-                            </select>
-                            <button id="btnApply" class="primary">Filtreyi Uygula</button>
-                            <button id="btnReset" class="ghost">Sıfırla</button>
-                            <span class="muted" id="filterInfo"></span>
-                            <div style="flex:1"></div>
-                            <button id="btnExport">CSV Dışa Aktar</button>
-                        </div>
-                    </div>
-
-                    <div class="card span-6">
-                        <h3 style="margin-top:0">Katılımcı Tablosu</h3>
-                        <div class="table-wrap">
-                            <table id="tbl">
-                                <thead>
-                                    <tr>
-                                        <th>Kod</th>
-                                        <th>Yaş</th>
-                                        <th>Cinsiyet</th>
-                                        <th>Eğitim</th>
-                                        <th>İnternet</th>
-                                        <th class="right">Ön</th>
-                                        <th class="right">Son</th>
-                                        <th class="right">Fark</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                        <div class="footer" id="tableInfo">—</div>
-                    </div>
-
-                    <div class="card span-6">
-                        <h3 style="margin-top:0">Ön/Son Test Karşılaştırma</h3>
-                        <canvas id="chart"></canvas>
-                        <div class="footer">Basit çubuk grafik: ortalamalar • Kütüphane gerektirmez.</div>
-                    </div>
-
-                    <div class="card span-12">
-                        <h3 style="margin-top:0">Veri Yönetimi</h3>
-                        <div class="split">
-                            <div>
-                                <div class="warn"><b>Önemli:</b> Kod, Firestore'dan veri çekmek için anonim kimlik doğrulamayı kullanır (Admin panelinde). Firestore kurallarınızın <code class="inline">allow read</code> iznine sahip olması GEREKİR. Koleksiyon: <code class="inline">${COLLECTION}</code>.</div>
-                                <pre id="cfg" style="white-space:pre-wrap;background:#0b1324;padding:12px;border:1px solid var(--border);border-radius:8px;overflow:auto"><code>// Firestore güvenlik kuralları örneği (Test için)
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /${COLLECTION}/{document} {
-      allow read: if true; // HERKESİN okumasına izin verir (GÜVENLİ DEĞİLDİR, SADECE TEST İÇİN)
-      allow write: if false; 
-    }
-  }
-}</code></pre>
-                            </div>
-                            <div>
-                                <div class="toolbar" style="margin-top:6px">
-                                    <button id="btnLoad">Firebase'den Veri Yükle</button>
-                                    <button id="btnMock" class="ghost">Örnek Veri Yükle</button>
-                                </div>
-                                <div id="status" class="muted" style="margin-top:8px">Hazır.</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </main>
-        `;
-        
-        // Olay işleyicileri
-        document.getElementById("btnLoad").addEventListener("click", loadFromFirebase);
-        document.getElementById("btnMock").addEventListener("click", loadMock);
-        document.getElementById("btnApply").addEventListener("click", applyFilters);
-        document.getElementById("btnReset").addEventListener("click", resetFilters);
-        document.getElementById("btnExport").addEventListener("click", ()=>{
-            const csv = toCSV(VIEW);
-            download("siber_bilinclik_admin_export.csv", csv);
-        });
-        document.getElementById("logout-button").addEventListener("click", handleLogout);
-
-        // İlk yükleme
-        renderKPIs(VIEW);
-        renderTable(VIEW);
-    }
-
-    // Ana Uygulama Render Kontrol Noktası
-    function renderApp() {
-        if (isLoggedIn) {
-            renderDashboard();
-        } else {
-            renderLoginScreen();
-        }
-    }
-
-
-    // --- İŞLEYİCİ FONKSİYONLAR ---
-
-    async function handleLogin(e) {
-        e.preventDefault();
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const loginButton = document.getElementById('login-button');
-
-        const email = emailInput.value;
-        const password = passwordInput.value;
-        
-        if (!auth) {
-            renderLoginScreen("Hata: Firebase Auth hizmeti başlatılamadı. Yapılandırmayı kontrol edin.");
-            return;
-        }
-
-        loginButton.innerHTML = `<span class="loading-spin"></span> Giriş Yapılıyor...`;
-        loginButton.disabled = true;
-
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            // Başarılı girişten sonra onAuthStateChanged tetiklenecek ve renderDashboard çağrılacak.
-        } catch (error) {
-            let errorMessage = "Giriş başarısız oldu. E-posta veya şifre hatalı.";
-            console.error("Firebase Giriş Hatası:", error);
-            // Hata mesajını yenilenen ekranda göster
-            renderLoginScreen(errorMessage);
-        }
-    }
-    
-    async function handleLogout() {
-        if (auth) {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error("Çıkış Hatası:", error);
-                // Custom UI'ya çevirilmeli
-                alert("Çıkış yapılırken bir hata oluştu."); 
-            }
-        }
-    }
-
-
-    // --- VERİ İŞLEME VE GÖSTERİM ---
-
-    function renderKPIs(data){
-        const completed = data.filter(d => d.pre != null && d.post != null);
-        const mPre = mean(completed.map(x => x.pre));
-        const mPost = mean(completed.map(x => x.post));
-        const inc = pct(mPost, mPre);
-
-        document.getElementById("kpiCount").textContent = String(completed.length);
-        document.getElementById("kpiPre").textContent = format(mPre);
-        document.getElementById("kpiPost").textContent = format(mPost);
-        document.getElementById("kpiInc").textContent = Number.isFinite(inc) ? inc.toFixed(1)+"%" : "—";
-
-        const badge = document.getElementById("kpiBadge");
-        if(badge) {
-             if(Number.isFinite(inc)){
-                badge.textContent = inc>=0 ? "Artış" : "Azalış";
-                badge.className = "badge" + (inc>=0 ? "" : " neg");
-            }else{
-                badge.textContent = "—";
-                badge.className = "badge";
-            }
-        }
-        drawChart(mPre, mPost);
-    }
-
-    function renderTable(data){
-        const tb = document.querySelector("#tbl tbody");
-        if(!tb) return;
-
-        tb.innerHTML = "";
-        let rows = 0;
-        // En son kaydın en başta görünmesi için veriyi ters çevir
-        const sortedData = [...data].reverse(); 
-
-        for(const d of sortedData){
-            const diff = (d.post ?? 0) - (d.pre ?? 0);
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>${d.id ?? ""}</td>
-                <td>${d.age ?? ""}</td>
-                <td>${d.gender ?? ""}</td>
-                <td>${d.education ?? ""}</td>
-                <td>${d.internet ?? ""}</td>
-                <td class="right">${d.pre != null ? d.pre.toFixed(1) : "—"}</td>
-                <td class="right">${d.post != null ? d.post.toFixed(1) : "—"}</td>
-                <td class="right" style="color:${diff>=0 ? 'var(--accent)' : 'var(--danger)'}">
-                    ${Number.isFinite(diff) ? diff.toFixed(1) : "—"}
-                </td>
-            `;
-            tb.appendChild(tr);
-            rows++;
-        }
-        document.getElementById("tableInfo").textContent = rows ? `${rows} kayıt listelendi.` : "Kayıt bulunamadı.";
-    }
-
-    function applyFilters(){
-        const g = document.getElementById("fGender").value;
-        const e = document.getElementById("fEdu").value;
-        const i = document.getElementById("fInternet").value;
-
-        VIEW = RAW.filter(d => {
-            if(g && d.gender !== g) return false;
-            if(e && d.education !== e) return false;
-            if(i && d.internet !== i) return false;
-            return true;
-        });
-
-        document.getElementById("filterInfo").textContent =
-            (g||e||i) ? "Filtre aktif" : "";
-
-        renderKPIs(VIEW);
-        renderTable(VIEW);
-    }
-
-    function resetFilters(){
-        document.getElementById("fGender").value = "";
-        document.getElementById("fEdu").value = "";
-        document.getElementById("fInternet").value = "";
-        VIEW = RAW.slice();
-        document.getElementById("filterInfo").textContent = "";
-        renderKPIs(VIEW);
-        renderTable(VIEW);
-    }
-    
-    // --- VERİ ÇEKME ---
-
-    async function loadFromFirebase(){
-        if(!db) {
-            toast("Hata: Firestore başlatılamadı. Yapılandırmayı kontrol edin.", "err");
-            return;
-        }
-
-        try{
-            toast("Veriler çekiliyor...", "warn");
-
-            // Canvas'ta sadece /artifacts/{appId}/users/{userId}/... yoluna yazma izni var.
-            // Bu nedenle, tüm kullanıcı verilerini çekmek için anonim kullanıcı ile
-            // genel bir koleksiyondan (veya adminin okuma izni olan yerden) çekmeye çalışıyoruz.
-            const user = auth.currentUser;
-            const uid = user ? user.uid : 'anon';
+                </div>
+            </div>
             
-            // Eğer verileriniz /artifacts/{appId}/public/data/veliler altında ise:
-            // const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            // const collectionPath = `/artifacts/${appId}/public/data/${COLLECTION}`;
-            
-            // Eğer verileriniz ana koleksiyon olan "veliler" altında ise (tercih edilen):
-            const collectionPath = COLLECTION; 
-            
-            const snap = await getDocs(collection(db, collectionPath));
-            RAW = [];
-            
-            snap.forEach(docSnap => {
-                const d = docSnap.data() || {};
-                // Verilerinizi buradaki yapıyla eşleşecek şekilde Firestore'a kaydetmelisiniz.
-                // Örnek Firestore yapısı:
-                // { demographics: { age: 35, gender: 'Kadın', ... }, pretest: { score: 65.5, ... }, posttest: { score: 80.0, ... } }
-                RAW.push({
-                    id: docSnap.id, // Firestore document ID'si
-                    age: (d.demographics && d.demographics.age) ?? null,
-                    gender: (d.demographics && d.demographics.gender) ?? "",
-                    education: (d.demographics && d.demographics.education) ?? "",
-                    internet: (d.demographics && d.demographics.internet_use) ?? "",
-                    pre: d.pretest?.score ?? null, // Lütfen puanları .score alanında tutun
-                    post: d.posttest?.score ?? null
-                });
-            });
-            VIEW = RAW.slice();
-            renderKPIs(VIEW);
-            renderTable(VIEW);
-            toast(`Yüklendi: ${RAW.length} kayıt.`, "ok");
-        }catch(err){
-            console.error(err);
-            toast("Firebase okumada hata: Bağlantı veya Güvenlik Kurallarını kontrol edin.", "err");
-        }
-    }
+        </div>
+    </div>
 
-    // Basit örnek veri
-    function loadMock(){
-        const g = ["Kadın","Erkek","Belirtmek istemiyorum"];
-        const e = ["Lise","ÖnLisans","Lisans","Lisansüstü"];
-        const i = ["≤1 saat/gün","1-2 saat/gün","3-5 saat/gün","≥6 saat/gün"];
-        function rnd(a){return a[Math.floor(Math.random()*a.length)]}
-        RAW = Array.from({length: 40}).map((_,k)=>{
-            const pre = Math.floor(40 + Math.random()*25);
-            // %80 ihtimalle artış olsun
-            const post = Math.random() < 0.8 ? Math.max(pre, Math.floor(pre + Math.random()*20)) : pre;
-            return {
-                id: "VELI_"+String(k+1).padStart(3,"0"),
-                age: Math.floor(28 + Math.random()*22),
-                gender: rnd(g),
-                education: rnd(e),
-                internet: rnd(i),
-                pre, post
-            };
-        });
-        VIEW = RAW.slice();
-        renderKPIs(VIEW);
-        renderTable(VIEW);
-        toast("Örnek veri yüklendi. Firebase'den çekilmedi.", "ok");
-    }
+    <!-- Admin Panel Scripti: Firebase ve mantık bu dosyadan yüklenir -->
+    <script type="module" src="./admin-script.js"></script>
 
-    // --- CSV VE GRAFİK FONKSİYONLARI ---
-
-    function toCSV(data){
-        const cols = ["userID","age","gender","education","internet_use","pre_test_score","post_test_score"];
-        const header = cols.join(",");
-        const lines = data.map(d => [
-            d.id ?? "",
-            d.age ?? "",
-            d.gender ?? "",
-            d.education ?? "",
-            d.internet ?? "",
-            d.pre ?? "",
-            d.post ?? ""
-        ].map(x => `"${String(x).replaceAll('"','""')}"`).join(","));
-        return [header, ...lines].join("\n");
-    }
-
-    function download(name, text){
-        const blob = new Blob([text], {type:"text/csv;charset=utf-8;"});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url; a.download = name; a.click();
-        setTimeout(()=>URL.revokeObjectURL(url), 5000);
-    }
-    
-    function drawChart(mPre, mPost){
-        const canvas = document.getElementById("chart");
-        if(!canvas) return;
-        const ctx = canvas.getContext("2d");
-        // responsive canvas boyutunu al
-        const W = canvas.clientWidth;
-        const H = 220;
-        canvas.width = W;
-        canvas.height = H;
-
-        ctx.clearRect(0,0,W,H);
-
-        const margin = 36;
-        const labels = ["Ön", "Son"];
-        const values = [mPre||0, mPost||0];
-        // En yüksek puanı 10'un katına yuvarlayarak maksimum değeri belirle
-        const maxV = Math.max(10, Math.ceil(Math.max(...values, 80)/10)*10); 
-
-        // Eksenler
-        ctx.strokeStyle = "#1f2b45";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(margin, H - margin); // X ekseni
-        ctx.lineTo(W - margin, H - margin);
-        ctx.moveTo(margin, H - margin); // Y ekseni
-        ctx.lineTo(margin, margin);
-        ctx.stroke();
-
-        // Çentikler (Ticks)
-        ctx.fillStyle = "#7aa2d6";
-        ctx.font = "12px system-ui";
-        ctx.textAlign = "right";
-        for(let t=0; t<=5; t++){
-            const val = (maxV/5)*t;
-            const y = H - margin - ( (H-2*margin) * (val/maxV) );
-            ctx.fillText(String(Math.round(val)), margin - 6, y+4);
-            ctx.strokeStyle = "rgba(122,162,214,.15)";
-            ctx.beginPath();
-            ctx.moveTo(margin, y);
-            ctx.lineTo(W - margin, y);
-            ctx.stroke();
-        }
-
-        // Çubuklar
-        const barW = Math.min(60, (W - 2 * margin) / 4);
-        const totalBarWidth = barW * 2;
-        const totalGapWidth = W - 2 * margin - totalBarWidth;
-        const gap = totalGapWidth / 3;
-        const startX = margin + gap;
-        
-        const colors = ["var(--accent2)","var(--accent)"];
-
-        values.forEach((v, idx) => {
-            const x = startX + idx*(barW+gap);
-            const h = (H-2*margin) * (v/maxV);
-            const y = H - margin - h;
-
-            // Çubuk
-            const grad = ctx.createLinearGradient(0,y,0,H-margin);
-            grad.addColorStop(0, colors[idx]);
-            grad.addColorStop(1, "rgba(255,255,255,.05)");
-            ctx.fillStyle = grad;
-            ctx.fillRect(x, y, barW, h);
-
-            // Etiketler
-            ctx.fillStyle = "#e5e7eb";
-            ctx.textAlign = "center";
-            ctx.fillText(labels[idx], x+barW/2, H - margin + 16); // X ekseni etiketi
-            ctx.fillText(v.toFixed(1), x+barW/2, y-6); // Değer etiketi
-        });
-    }
-
-    // Uygulama Başlangıcı
-    document.addEventListener('DOMContentLoaded', initFirebase);
-</script>
-<script type="module" src="firebase-setup.js"></script>
-<script type="module" src="admin-script.js"></script>
-</body>
-</html>
 </body>
 </html>

@@ -1,12 +1,10 @@
 // --- FIREBASE KURULUMU ve GENEL FONKSİYONLAR ---
-// Bu dosya, tüm uygulamalar (index, quiz, admin) tarafından kullanılacak
-// Firebase bağlantısını ve temel Auth/Firestore fonksiyonlarını içerir.
+// Bu versiyon, Canvas ortamından bağımsız olarak çalışır ve
+// Firebase konfigürasyonunu doğrudan kullanır.
 
-// Gerekli Firebase modüllerini içe aktarma
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { 
     getAuth, 
-    signInWithCustomToken, 
     signInAnonymously, 
     onAuthStateChanged,
     signOut,
@@ -27,15 +25,24 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 import { setLogLevel } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-// Hata ayıklama seviyesini ayarlama (Opsiyonel, hataları görmeyi kolaylaştırır)
+// Hata ayıklama seviyesini ayarlama (Opsiyonel)
 setLogLevel('debug'); 
 
-// Global Değişkenleri Yükleme
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+// --- KRİTİK: BURAYI KENDİ BİLGİLERİNİZLE DEĞİŞTİRİN ---
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY_HERE", // Örn: "AIzaSy..."
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com", // Örn: "siber-farkindalik.firebaseapp.com"
+    projectId: "YOUR_PROJECT_ID_HERE", // Örn: "siber-farkindalik"
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+// --- KRİTİK SONU ---
 
-// Firebase Uygulamasını Başlatma
+// Standart bir uygulama için sabit bir uygulama kimliği kullanıyoruz.
+const appId = firebaseConfig.projectId || 'default-app-id';
+
+// Firebase Uygulamasını Başlatma (Sadece bir kez)
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -43,31 +50,29 @@ let currentUserId = null;
 
 // --- 1. AUTHENTICATION MANTIĞI ---
 
-// Uygulama başlatıldığında veya kimlik doğrulama durumu değiştiğinde çağrılır
-onAuthStateChanged(auth, async (user) => {
+// Auth durumu değiştiğinde çağrılır
+onAuthStateChanged(auth, (user) => {
     if (user) {
         currentUserId = user.uid;
-        localStorage.setItem('currentUserId', currentUserId);
-
+        // console.log("Kullanıcı Oturum Açtı:", currentUserId);
     } else {
         currentUserId = null;
-        localStorage.removeItem('currentUserId');
+        // console.log("Kullanıcı Oturum Kapattı.");
     }
 });
 
-// Oturum Açma: Canvas token'ı veya Anonim giriş kullanır
+/**
+ * Oturum Açma: Normal bir web uygulamasında anonim giriş kullanılır.
+ * Admin sayfasındaysa anonim girişi atlar (giriş formu çalışır).
+ */
 async function initializeAuth() {
     try {
-        // Eğer Canvas token'ı varsa, kullan
-        if (initialAuthToken) {
-            await signInWithCustomToken(auth, initialAuthToken);
-        } else {
-            // KRİTİK DÜZELTME: Eğer URL admin.html içeriyorsa, anonim giriş yapma! 
-            // Admin paneli kendi e-posta/şifre girişini kullanmalıdır.
-            if (!window.location.href.includes('admin.html')) {
-                await signInAnonymously(auth);
-            }
+        // Admin sayfasında değilsek, anonim olarak giriş yap
+        if (!window.location.href.includes('admin.html')) {
+            await signInAnonymously(auth);
+            console.log("Anonim olarak oturum açıldı.");
         }
+        // Admin sayfasında ise, giriş formunun çalışması beklenir.
     } catch (error) {
         console.error("Kimlik doğrulama başlatılırken hata oluştu:", error);
     }
@@ -79,20 +84,17 @@ initializeAuth();
 // --- 2. FIRESTORE GENEL FONKSİYONLARI ---
 
 /**
- * Ziyaretçi sayısını artırır (Günlük tekil sayım kontrolü çağıran fonksiyonda yapılmalıdır).
+ * Ziyaretçi sayısını artırır.
  */
 async function updateVisitorCount() {
+    // Veri yolu: /artifacts/{appId}/public/data/visitorCount
+    // Normal uygulamada, appId'yi projenin ID'si olarak kullanıyoruz.
     const docRef = doc(db, 'artifacts', appId, 'public/data', 'visitorCount');
     try {
-        await updateDoc(docRef, {
-            count: increment(1)
-        });
-        console.log("Ziyaretçi sayısı artırıldı.");
+        await updateDoc(docRef, { count: increment(1) });
     } catch (e) {
-        // Eğer döküman yoksa oluştur
         if (e.code === 'not-found') {
             await setDoc(docRef, { count: 1 });
-            console.log("Ziyaretçi sayacı oluşturuldu ve 1 olarak ayarlandı.");
         } else {
             console.error("Ziyaretçi sayacı güncellenirken hata oluştu:", e);
         }
@@ -101,7 +103,7 @@ async function updateVisitorCount() {
 
 
 /**
- * Kullanıcı kimlik doğrulama durumunu dinler (Admin script'i için dışa aktarıldı)
+ * Kullanıcı kimlik doğrulama durumunu dinler
  * @param {function} callback - (user) => {} şeklinde bir geri çağırma fonksiyonu
  */
 function listenToAuthChanges(callback) {
@@ -109,13 +111,12 @@ function listenToAuthChanges(callback) {
 }
 
 
-// --- 3. DIŞA AKTARIMLAR (Admin paneli, index, quiz scriptleri için) ---
+// --- 3. DIŞA AKTARIMLAR ---
 
 export { 
     db, 
     auth, 
     updateVisitorCount,
-    onAuthStateChanged, 
     listenToAuthChanges, 
     signInWithEmailAndPassword, 
     signOut,
