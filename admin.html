@@ -3,199 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siber Güvenlik Farkındalık - Admin Paneli</title>
-    <!-- Tailwind CSS CDN (Estetik için kullanıyoruz) -->
+    <title>Admin Panel - Siber Farkındalık</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1a1a2e; /* Koyu Mavi Arkaplan */
-            color: #ffffff;
+            background-color: #1f2937; /* Koyu Gri Arka Plan */
+            color: #f3f4f6;
             min-height: 100vh;
         }
+        /* Özel Kaydırma Çubuğu Stili */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #374151;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
         .card {
-            background-color: #2c2c48;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            background-color: #374151; /* Koyu Kart Arka Planı */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s;
         }
-        .input-field {
-            background-color: #1a1a2e;
-            border: 1px solid #4a4a7a;
-            color: white;
-        }
-        /* Tablo Stilleri */
-        th, td {
-            padding: 12px 16px;
-            text-align: left;
-        }
-        th {
-            background-color: #3b3b64;
-            color: #a0a0ff;
-        }
-        .table-container {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        /* KPI renkleri */
-        .kpi-title {
-            color: #a0a0ff;
-            font-weight: 500;
+        .card:hover {
+            transform: translateY(-2px);
         }
     </style>
 </head>
-<body>
+<body class="p-4 sm:p-8">
 
-    <div class="p-6 md:p-10">
+    <div id="appContainer" class="max-w-7xl mx-auto">
         
-        <!-- Hata Mesaj Alanı -->
-        <div id="errorMessage" class="mb-6">
-            <!-- Hata mesajları buraya gelecek -->
-        </div>
-
-        <!-- LOGIN CONTAINER (Admin Girişi) -->
-        <div id="loginContainer" class="max-w-md mx-auto card p-8 my-20">
-            <h1 class="text-3xl font-bold mb-6 text-center text-indigo-400">Admin Girişi</h1>
-            
-            <form id="loginForm" class="space-y-6">
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1">E-posta Adresi</label>
-                    <input type="email" id="email" name="email" required class="w-full p-3 input-field rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Şifre</label>
-                    <input type="password" id="password" name="password" required class="w-full p-3 input-field rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+        <!-- Giriş Konteyneri -->
+        <div id="loginContainer" class="flex items-center justify-center min-h-screen">
+            <div class="w-full max-w-md card p-8 rounded-xl">
+                <h1 class="text-3xl font-bold mb-6 text-center text-white">Admin Girişi</h1>
+                
+                <div id="errorMessage" class="mb-4">
+                    <!-- Hata mesajları buraya gelecek -->
                 </div>
                 
-                <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors shadow-lg">
-                    Giriş Yap
-                </button>
-                <p class="text-sm text-center text-gray-400 mt-4">Firebase Auth'ta tanımlı bir kullanıcı ile giriş yapılmalıdır.</p>
-            </form>
+                <form id="loginForm">
+                    <div class="mb-4">
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">E-posta</label>
+                        <input type="email" id="email" name="email" required 
+                               class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 text-white"
+                               placeholder="admin@ornek.com">
+                    </div>
+                    <div class="mb-6">
+                        <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Şifre</label>
+                        <input type="password" id="password" name="password" required 
+                               class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 text-white"
+                               placeholder="Şifreniz">
+                    </div>
+                    <button type="submit" 
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-lg">
+                        Giriş Yap
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <!-- DASHBOARD CONTAINER (Yönetim Paneli) -->
+        <!-- Dashboard Konteyneri (Başlangıçta gizli) -->
         <div id="dashboardContainer" class="hidden">
-            <header class="flex justify-between items-center pb-6 border-b border-gray-700 mb-6">
-                <h1 class="text-4xl font-extrabold text-indigo-300">Siber Farkındalık Admin Paneli</h1>
-                <button id="logoutButton" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors">
+            <header class="flex flex-col sm:flex-row justify-between items-center mb-8 pb-4 border-b border-gray-700">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-4 sm:mb-0">Siber Farkındalık - Admin Paneli</h1>
+                <button id="logoutButton" 
+                        class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl transition-colors shadow-lg">
                     Çıkış Yap
                 </button>
             </header>
 
-            <!-- KPI'lar (Ana Performans Göstergeleri) -->
+            <!-- KPI Kartları -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="card p-5">
-                    <p class="kpi-title">Toplam Katılımcı</p>
-                    <p id="totalParticipants" class="text-3xl font-bold mt-1">—</p>
-                    <p class="text-sm text-gray-400">Veri tabanındaki tüm kayıtlar</p>
+                
+                <div class="card p-5 rounded-xl text-center">
+                    <p class="text-sm font-medium text-gray-400">Toplam Katılımcı</p>
+                    <p id="totalParticipants" class="text-3xl font-bold text-white mt-1">—</p>
                 </div>
-                <div class="card p-5">
-                    <p class="kpi-title">Ön Test Ort.</p>
+                
+                <div class="card p-5 rounded-xl text-center">
+                    <p class="text-sm font-medium text-gray-400">Ön Test Ort.</p>
                     <p id="preTestAvg" class="text-3xl font-bold text-blue-400 mt-1">—</p>
-                    <p class="text-sm text-gray-400">Tamamlanan testlerin ortalaması</p>
                 </div>
-                <div class="card p-5">
-                    <p class="kpi-title">Son Test Ort.</p>
+                
+                <div class="card p-5 rounded-xl text-center">
+                    <p class="text-sm font-medium text-gray-400">Son Test Ort.</p>
                     <p id="postTestAvg" class="text-3xl font-bold text-yellow-400 mt-1">—</p>
-                    <p class="text-sm text-gray-400">Tamamlanan testlerin ortalaması</p>
-                </div>
-                <div class="card p-5">
-                    <p class="kpi-title">% Puan Artışı</p>
-                    <p id="percentIncrease" class="text-3xl font-bold text-green-400 mt-1">—</p>
-                    <p class="text-sm text-gray-400">Ortalama artış yüzdesi</p>
-                </div>
-            </div>
-
-            <!-- Filtreleme ve Dışa Aktarma -->
-            <div class="card p-5 mb-8 flex flex-wrap gap-4 items-end">
-                <h2 class="text-xl font-semibold w-full mb-3 text-indigo-400">Veri Filtreleme</h2>
-                
-                <div class="flex-1 min-w-[150px]">
-                    <label for="cinsiyetFilter" class="block text-sm font-medium text-gray-300 mb-1">Cinsiyet</label>
-                    <select id="cinsiyetFilter" class="w-full p-2 input-field rounded-lg">
-                        <option>Tümü</option>
-                        <option>Erkek</option>
-                        <option>Kadın</option>
-                        <option>Belirtilmemiş</option>
-                    </select>
-                </div>
-
-                <div class="flex-1 min-w-[150px]">
-                    <label for="egitimFilter" class="block text-sm font-medium text-gray-300 mb-1">Eğitim Durumu</label>
-                    <select id="egitimFilter" class="w-full p-2 input-field rounded-lg">
-                        <option>Tümü</option>
-                        <option>İlk/Orta Okul</option>
-                        <option>Lise</option>
-                        <option>Üniversite</option>
-                        <option>Lisansüstü</option>
-                        <option>Belirtilmemiş</option>
-                    </select>
-                </div>
-
-                <div class="flex-1 min-w-[150px]">
-                    <label for="internetFilter" class="block text-sm font-medium text-gray-300 mb-1">İnternet Kullanımı</label>
-                    <select id="internetFilter" class="w-full p-2 input-field rounded-lg">
-                        <option>Tümü</option>
-                        <option>0-2 saat</option>
-                        <option>2-5 saat</option>
-                        <option>5+ saat</option>
-                        <option>Belirtilmemiş</option>
-                    </select>
                 </div>
                 
-                <button id="applyFiltersButton" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors">
-                    Filtreleri Uygula
-                </button>
-                <button id="resetFiltersButton" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors">
-                    Sıfırla
-                </button>
-                <button id="csvExportButton" class="ml-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors">
-                    CSV İndir
-                </button>
+                <div class="card p-5 rounded-xl text-center">
+                    <p class="text-sm font-medium text-gray-400">Farkındalık Artışı</p>
+                    <p id="percentIncrease" class="text-3xl font-bold text-gray-400 mt-1">—</p>
+                </div>
+
             </div>
 
-            <!-- Tablo ve Grafik Alanı -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Katılımcı Tablosu -->
-                <div class="card lg:col-span-2 p-5">
-                    <h2 class="text-xl font-semibold mb-4 text-indigo-400">Katılımcı Verileri</h2>
-                    <div class="table-container">
-                        <table class="min-w-full">
-                            <thead>
-                                <tr>
-                                    <th>Kullanıcı Kodu</th>
-                                    <th>Yaş</th>
-                                    <th>Cinsiyet</th>
-                                    <th>Eğitim</th>
-                                    <th>İnternet Süresi</th>
-                                    <th>Ön Puan</th>
-                                    <th>Son Puan</th>
-                                    <th>Fark</th>
-                                </tr>
-                            </thead>
-                            <tbody id="participantsTableBody">
-                                <!-- Veriler buraya admin-script.js tarafından eklenecek -->
-                            </tbody>
-                        </table>
+            <!-- Veri Görselleştirme Alanı -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                
+                <!-- Grafik Kartı -->
+                <div class="card p-6 rounded-xl lg:col-span-2">
+                    <h2 class="text-xl font-semibold mb-4 text-white">Ön Test - Son Test Karşılaştırması (Ortalama Puanlar)</h2>
+                    <div id="testComparisonChart" class="flex justify-around items-end h-48">
+                        <!-- Grafik buraya JS ile çizilecek -->
                     </div>
                 </div>
 
-                <!-- Grafik Alanı (Test Karşılaştırma) -->
-                <div class="card p-5 lg:col-span-1">
-                    <h2 class="text-xl font-semibold mb-4 text-indigo-400">Test Karşılaştırma Grafiği</h2>
-                    <div id="testComparisonChart" class="flex justify-around items-end h-64 mt-4">
-                        <!-- Çubuk grafik buraya admin-script.js tarafından eklenecek -->
+                <!-- Filtreleme Kartı -->
+                <div class="card p-6 rounded-xl">
+                    <h2 class="text-xl font-semibold mb-4 text-white">Veri Filtreleme</h2>
+                    <div class="space-y-4">
+                        
+                        <div>
+                            <label for="cinsiyetFilter" class="block text-sm font-medium text-gray-300 mb-1">Cinsiyet</label>
+                            <select id="cinsiyetFilter" class="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 text-white">
+                                <option value="Tümü">Tümü</option>
+                                <option value="Kadın">Kadın</option>
+                                <option value="Erkek">Erkek</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="egitimFilter" class="block text-sm font-medium text-gray-300 mb-1">Eğitim Düzeyi</label>
+                            <select id="egitimFilter" class="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 text-white">
+                                <option value="Tümü">Tümü</option>
+                                <option value="İlkokul">İlkokul</option>
+                                <option value="Ortaokul">Ortaokul</option>
+                                <option value="Lise">Lise</option>
+                                <option value="Üniversite">Üniversite</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="internetFilter" class="block text-sm font-medium text-gray-300 mb-1">Günlük İnternet Süresi</label>
+                            <select id="internetFilter" class="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 text-white">
+                                <option value="Tümü">Tümü</option>
+                                <option value="1 saatten az">1 saatten az</option>
+                                <option value="1-3 saat">1-3 saat</option>
+                                <option value="3-5 saat">3-5 saat</option>
+                                <option value="5 saatten fazla">5 saatten fazla</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="flex justify-between space-x-2 mt-6">
+                         <button id="applyFiltersButton" 
+                                class="w-1/2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-xl transition-colors">
+                            Filtrele
+                        </button>
+                        <button id="resetFiltersButton" 
+                                class="w-1/2 bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 rounded-xl transition-colors">
+                            Sıfırla
+                        </button>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Veri Tablosu -->
+            <div class="card p-6 rounded-xl overflow-x-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-white">Katılımcı Detayları</h2>
+                    <button id="csvExportButton" 
+                            class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-xl transition-colors shadow-md text-sm">
+                        CSV Olarak İndir
+                    </button>
+                </div>
+                
+                <table class="min-w-full divide-y divide-gray-700">
+                    <thead class="bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Kullanıcı ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Yaş</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Cinsiyet</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Eğitim</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">İnternet Süresi</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Ön Test</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Son Test</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Fark</th>
+                        </tr>
+                    </thead>
+                    <tbody id="participantsTableBody" class="divide-y divide-gray-700">
+                        <!-- Veriler buraya JS ile eklenecek -->
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 
-    <!-- Admin Panel Scripti: Firebase ve mantık bu dosyadan yüklenir -->
+    <!-- Firebase Kurulum Betiği -->
+    <script type="module" src="./firebase-setup.js"></script>
+    <!-- Admin Script Betiği -->
     <script type="module" src="./admin-script.js"></script>
-
 </body>
 </html>

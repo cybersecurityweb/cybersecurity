@@ -29,14 +29,25 @@ import { setLogLevel } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-
 setLogLevel('debug'); 
 
 // --- KRİTİK: BURAYI KENDİ BİLGİLERİNİZLE DEĞİŞTİRİN ---
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY_HERE", // Örn: "AIzaSy..."
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com", // Örn: "siber-farkindalik.firebaseapp.com"
-    projectId: "YOUR_PROJECT_ID_HERE", // Örn: "siber-farkindalik"
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDdkl1ZV3f2opyXwcNFbEZHRvWcSTgLLJ4",
+  authDomain: "cybersecurity-test-analytics.firebaseapp.com",
+  projectId: "cybersecurity-test-analytics",
+  storageBucket: "cybersecurity-test-analytics.firebasestorage.app",
+  messagingSenderId: "1070203500987",
+  appId: "1:1070203500987:web:0a3b257a0fabcb3ff02c9e",
+  measurementId: "G-HBSRZWSKJ2"
 };
+
+// Initialize Firebase
 // --- KRİTİK SONU ---
 
 // Standart bir uygulama için sabit bir uygulama kimliği kullanıyoruz.
