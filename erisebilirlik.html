@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erişilebilirlik</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-background">
+    <canvas id="neon-lines"></canvas>
+    <div class="container scenario-page">
+        <header class="page-header">
+            
+            <h1>Erişilebilirlik</h1>
+            <p>Çocuklarınızın kullandığı cihazların fiziksel ve yazılımsal güvenliğini sağlamak için pratik adımlar.</p>
+            
+            <div class="header-completion-section">
+                <a href="index.html" class="start-button">Ana Sayfaya Dön ve Devam Et</a>
+            </div>
+        </header>
+
+        <section class="scenario-content detail-content">
+            
+            <h2>Cihaz Güvenliği: Erişim Kontrolü</h2>
+            <p>Erişilebilirlik senaryosu, sadece kimlerin cihazı kullanabileceğini değil, aynı zamanda cihazdaki yazılımın ve ağ bağlantılarının güvenliğini de kapsar. Yetkisiz erişimi engellemek, ilk savunma hattıdır.</p>
+
+            <div class="highlight-box privacy-settings">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smartphone"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                </div>
+                <h3>Adım 1: Her Zaman Kilit Kullanın</h3>
+                <p>Tüm cihazlarda (telefon, tablet, bilgisayar) güçlü bir **PIN, desen veya biyometrik kilit** (parmak izi) zorunluluğu getirin. Kısa bir süre kullanılmadığında cihazın otomatik kilitlenmesini sağlayın.</p>
+            </div>
+            
+            <div class="highlight-box private-info">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 15a9 9 0 0 1 8.84-12L12 3"/></svg>
+                </div>
+                <h3>Adım 2: Güncellemek Hayati Önem Taşır</h3>
+                <p>Yazılım ve uygulama güncellemeleri, güvenlik açıklarını kapatmak için çıkar. Bu güncellemeleri ertelemeyin. Eski yazılımlar, yetkisiz erişime davetiye çıkarır.</p>
+            </div>
+
+            <div class="highlight-box communication">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#32CD32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-wifi-off"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 0 5.06 5.06"/><path d="M10.71 13.29a3.5 3.5 0 0 0 5 5L17 19"/><line x1="12" y1="22" x2="12" y2="22"/></svg>
+                </div>
+                <h3>Adım 3: Ortak Wi-Fi Riskleri</h3>
+                <p>Halka açık yerlerde (kafe, okul, AVM) kullanılan ücretsiz Wi-Fi ağlarının genellikle güvensiz olduğunu anlatın. Bu ağlarda şifre girme, alışveriş yapma gibi hassas işlemlerden kaçınılmalıdır.</p>
+            </div>
+            <div id="settings-check" class="interactive-module" style="margin-top: 50px;">
+                <h2><span class="highlight-text" style="color: #2ecc71;">⚙️ Güvenlik Ayarları Kontrolü</span></h2>
+                <p style="text-align: center; color: #ccc;">Bir cihazın güvenliğini sağlamak için aşağıdaki ayarların hangileri **AÇIK** olmalıdır? Doğru ayarları işaretleyin.</p>
+
+                <div class="settings-grid">
+                    <button class="setting-button" data-setting="lock">Ekran Kilidi (Şifre/Parmak İzi)</button>
+                    <button class="setting-button" data-setting="update">Otomatik Güncellemeler</button>
+                    <button class="setting-button" data-setting="location">Konum Paylaşımı (Zorunlu Olmadıkça)</button>
+                    <button class="setting-button" data-setting="bluetooth">Bluetooth (Kullanılmadığında)</button>
+                    <button class="setting-button" data-setting="admin">Uygulama İndirme (Yönetici İzni)</button>
+                    <button class="setting-button" data-setting="backup">Otomatik Bulut Yedekleme</button>
+                </div>
+                <div class="footer-navigation">
+                    <a href="index.html" class="back-to-home-button">
+                        ← Ana Sayfaya Dön
+                    </a>
+                </div>
+                <button id="check-settings" class="phishing-action-button" style="margin-top: 20px; background-color: #f39c12;">Ayarları Kontrol Et</button>
+
+                <div id="settings-feedback" class="feedback-box" style="display: none;">
+                </div>
+            </div>
+        </section>
+
+    </div>
+    <script src="neon_lines.js"></script>
+    <script src="client.js"></script>
+    <script src="interactives.js"></script>
+</body>
+</html>

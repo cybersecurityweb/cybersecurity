@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilinçli Kullanım ve Dijital Etik</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Gerekli geri bildirim stilleri için minimal CSS ekleyelim (Eğer style.css dosyanız yoksa) -->
+    <style>
+        .bullying-button {
+            transition: background-color 0.3s, border-color 0.3s;
+            border: 3px solid transparent; /* Butonlara başlangıçta şeffaf çerçeve ekledik */
+        }
+
+        .bullying-button.selected {
+            border-color: #00BFFF; /* Seçimi göstermek için mavi çerçeve */
+            background-color: #2980b9; /* Hafif bir arka plan */
+        }
+
+        .bullying-button.correct {
+            background-color: #27ae60; /* Yeşil */
+            border-color: #2ecc71;
+            font-weight: 700;
+        }
+
+        .bullying-button.incorrect {
+            background-color: #e74c3c; /* Kırmızı */
+            border-color: #c0392b;
+            font-weight: 700;
+        }
+
+        .feedback-box {
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            font-weight: 500;
+        }
+
+        .feedback-correct {
+            background-color: #2ecc7133;
+            border: 2px solid #2ecc71;
+            color: #2ecc71;
+        }
+
+        .feedback-incorrect {
+            background-color: #e74c3c33;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body class="dark-background">
+    <canvas id="neon-lines"></canvas>
+    <div class="container scenario-page">
+        <header class="page-header">
+            
+            <h1>Bilinçli Kullanım</h1>
+            <p>Dijital dünyada etik kurallar, zaman yönetimi ve sağlıklı çevrimiçi etkileşimler hakkında bilgi edinin.</p>
+            
+            <div class="header-completion-section">
+                <a href="index.html" class="start-button">Ana Sayfaya Dön ve Devam Et</a>
+            </div>
+        </header>
+
+        <section class="scenario-content detail-content">
+            
+            <h2>Dijital Vatandaş Olmak</h2>
+            <p>Bilinçli kullanım, interneti sadece güvenli değil, aynı zamanda etik, saygılı ve dengeli bir şekilde kullanmak demektir. Çocuklarımızın çevrimiçi davranışlarının, gerçek dünyadaki davranışlarından farksız olduğunu anlamaları önemlidir.</p>
+
+            <div class="highlight-box privacy-settings">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <h3>Adım 1: Siber Zorbalığa Hayır</h3>
+                <p>İnternette kimseyi rahatsız etmemeyi, küçümsememeyi veya tehdit etmemeyi öğretin. Siber zorbalık hem etik dışıdır hem de yasal sonuçları vardır. Zorbalıkla karşılaşan çocukların hemen size haber vermesi gerektiğini vurgulayın.</p>
+            </div>
+            
+            <div class="highlight-box private-info">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <h3>Adım 2: Çevrimiçi Denge</h3>
+                <p>Ekran süresi ve gerçek hayat arasındaki dengeyi kurmalarına yardımcı olun. Yemek saatleri, yatma saatleri veya ders çalışma saatlerinde cihazların kapatılması gibi aile kuralları belirleyin.</p>
+            </div>
+
+            <div class="highlight-box communication">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#32CD32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                </div>
+                <h3>Adım 3: İtibar ve Ayak İzi</h3>
+                <p>İnternette yaptıkları her şeyin bir iz bıraktığını ve bu izlerin gelecekteki eğitim/iş hayatlarını etkileyebileceğini anlatın. Paylaşmadan önce, **"Bu paylaşımı ileride görmek ister miyim?"** diye sormalarını teşvik edin.</p>
+            </div>
+            <div id="cyber-bullying-response" class="interactive-module" style="margin-top: 50px;">
+                <h2><span class="highlight-text" style="color: #e74c3c;">🛑 Siber Zorbalık Yanıtı</span></h2>
+                <p style="text-align: center; color: #ccc;">Çocuğunuz çevrimiçi bir oyunda/platformda zorbalığa uğradı. Aşağıdaki tepkilerden hangisi en uygunudur?</p>
+
+                <div class="bullying-scenario-box">
+                    <h3 class="scenario-title" style="color: #e74c3c;">MESAJ: "Seninle oynamak istemiyoruz. Çok kötüsün. Oyundan silin!"</h3>
+                    
+                    <div class="option-buttons-container">
+                        <button class="bullying-button" data-choice="A">A) Hemen yanıt verip, karşı tarafın ne kadar haksız olduğunu anlatmaya çalışmak.</button>
+                        <button class="bullying-button" data-choice="B">B) Mesajı görmezden gelmek, ekran görüntüsü almak, kişiyi engellemek ve bir büyüğe haber vermek.</button>
+                        <button class="bullying-button" data-choice="C">C) Hesabı tamamen kapatmak ve bir daha oynamamak.</button>
+                    </div>
+                </div>
+                <div class="footer-navigation">
+                    <a href="index.html" class="back-to-home-button">
+                        ← Ana Sayfaya Dön
+                    </a>
+                </div>
+                <div id="bullying-feedback" class="feedback-box" style="display: none;">
+                </div>
+            </div>
+        </section>
+
+    </div>
+    <script src="neon_lines.js"></script>
+    <script src="client.js"></script>
+    <!-- Orijinal interactives.js içeriği bu blok içinde güncelleniyor -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.bullying-button');
+            const feedbackBox = document.getElementById('bullying-feedback');
+            const correctChoice = 'B'; // Doğru cevap 'B'
+
+            const feedbackMessages = {
+                A: {
+                    isCorrect: false,
+                    message: `
+                        <p><strong>Yanlış Cevap (A)!</strong> Zorbalığa hemen yanıt vermek genellikle durumu daha da kötüleştirir ve zorbanın istediği tepkiyi verir. Bir tartışmaya girmek asla önerilen bir ilk adım değildir.</p>
+                        <p><strong>En iyi yaklaşım (B):</strong> Sakin kalmak, kanıtı (ekran görüntüsü) toplamak, iletişimi kesmek (engellemek) ve durumu hemen bir yetişkine bildirmektir. Bu, hem çocuğun güvende hissetmesini sağlar hem de zorbalıkla başa çıkmak için kanıt sunar.</p>
+                    `
+                },
+                B: {
+                    isCorrect: true,
+                    message: `
+                        <p><strong>Doğru Cevap (B)!</strong> Bu, siber zorbalığa karşı alınabilecek en uygun ve güvenli tepkidir. İşte neden:</p>
+                        <ul>
+                            <li><strong>Görmezden Gelmek:</strong> Zorbanın ilgisini çekmekten kaçınır.</li>
+                            <li><strong>Ekran Görüntüsü Almak:</strong> Olayın kanıtını sağlar.</li>
+                            <li><strong>Engellemek:</strong> İletişimi keser ve zorbanın daha fazla erişimini önler.</li>
+                            <li><strong>Bir Büyüğe Haber Vermek:</strong> Çocuğun yalnız olmadığını bilmesini sağlar ve durumu çözmek için yetişkin gözetimi altında bir yol izlenir.</li>
+                        </ul>
+                    `
+                },
+                C: {
+                    isCorrect: false,
+                    message: `
+                        <p><strong>Yanlış Cevap (C)!</strong> Hesabı kapatmak bir çözüm olsa da, bu, zorbalığın amacına ulaşmasına izin vermek demektir. Çocuğun sevdiği bir aktiviteden vazgeçmesi gerekmez.</p>
+                        <p><strong>En iyi yaklaşım (B):</strong> Kanıt toplayıp (ekran görüntüsü), zorbanın erişimini engelleyip (engellemek) ve bir büyüğe haber vermektir. Bu, çocuğun sevdiği oyuna devam etmesini sağlarken, zorbalıkla güvenli bir şekilde başa çıkılmasına olanak tanır.</p>
+                    `
+                }
+            };
+
+            buttons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const choice = event.currentTarget.dataset.choice;
+                    const result = feedbackMessages[choice];
+
+                    // 1. Tüm butonların seçim ve doğru/yanlış stilini sıfırla/kaldır
+                    buttons.forEach(btn => {
+                        btn.classList.remove('selected', 'correct', 'incorrect');
+                    });
+                    
+                    // 2. Seçilen butonu işaretle ve doğru/yanlış stilini uygula
+                    event.currentTarget.classList.add('selected');
+
+                    // 3. Geri bildirim kutusunu temizle ve göster
+                    feedbackBox.innerHTML = result.message;
+                    feedbackBox.style.display = 'block';
+
+                    // 4. Doğru/Yanlış stilini geri bildirim kutusuna uygula
+                    feedbackBox.classList.remove('feedback-correct', 'feedback-incorrect');
+                    if (result.isCorrect) {
+                        feedbackBox.classList.add('feedback-correct');
+                        event.currentTarget.classList.add('correct');
+                    } else {
+                        feedbackBox.classList.add('feedback-incorrect');
+                        event.currentTarget.classList.add('incorrect');
+                    }
+                    
+                    // 5. Doğru cevabı da işaretle (Yanlış cevap verilse bile doğru olanı göster)
+                    buttons.forEach(btn => {
+                        if (btn.dataset.choice === correctChoice) {
+                            btn.classList.add('correct');
+                        }
+                    });
+                    
+                    // Geri bildirim kutusuna odaklan
+                    feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+            });
+        });
+    </script>
+    <!-- Orijinal neon_lines.js ve client.js'i kullanmaya devam ediyoruz -->
+    <!-- <script src="interactives.js"></script> -->
+     <script src="neon_lines.js"></script>
+    <script src="interactives.js"></script>
+
+</body>
+</html>

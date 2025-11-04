@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siber Güvenlik</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-background">
+
+    <canvas id="neon-lines"></canvas>
+
+    <div class="container">
+        <header class="main-header">
+            <h1>Daha Güvenli ve Bilgili Bir İnternet İçin Seneryoları Ziyaret Edin</h1>
+            <p>Ön test ile başlayın, ardından gizlilik, şifreler, veri bütünlüğü, gerçeklik, erişilebilirlik ve bilinçli kullanım konularında senaryoları tamamlayın.</p>
+            <!-- index.html içerisindeki Ön Test butonu -->
+    <a href="#" onclick="startTest('pre')" class="start-button">Ön Teste Hemen Başla</a>
+        </header>
+
+        <section class="scenario-grid">
+            <a href="gizlilik.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield-lock"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><rect x="8" y="11" width="8" height="6" rx="1"/><path d="M11 11V8a3 3 0 0 1 6 0v3"/></svg>
+                    </div>
+                    <h3>Gizlilik</h3>
+                    <p>Kişisel bilgilerin korunması</p>
+                </div>
+            </a>
+            
+            <a href="şifreler.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-key"><path d="M21 2l-6.5 6.5a1.5 1.5 0 0 0 0 2.12c.56.56 1.48.56 2.04 0L21 4"/><path d="M11 11l6.5-6.5"/><path d="M10 20l4-4"/><path d="M20 12l-8 8-4-4-8-8-4-4"/></svg>
+                    </div>
+                    <h3>Şifreler</h3>
+                    <p>Hesap güvenliği sağlama</p>
+                </div>
+            </a>
+
+            <a href="veri_butunlugu.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-database"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3"/></svg>
+                    </div>
+                    <h3>Veri Bütünlüğü</h3>
+                    <p>Verileri kaybetmeye karşı korunma</p>
+                </div>
+            </a>
+
+            <a href="gerceklik.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 2.05a.5.5 0 0 1 .71-.71l.71-.71A2 2 0 0 1 12 1a2 2 0 0 1 1.29.35l.71.71a.5.5 0 0 1 .71.71l.71.71A2 2 0 0 1 18 10v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h1.29l.71-.71z"/><path d="M12 15h.01"/><path d="M12 11V7"/></svg>
+                    </div>
+                    <h3>Gerçeklik</h3>
+                    <p>Aldatıcı içerikleri tanıma</p>
+                </div>
+            </a>
+
+            <a href="erisebilirlik.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                    </div>
+                    <h3>Erişilebilirlik</h3>
+                    <p>Cihaz güvenliğini sağlama</p>
+                </div>
+            </a>
+
+            <a href="bilincli_kullanim.html" class="scenario-card-link">
+                <div class="scenario-card">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square-check"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><polyline points="9 10 12 13 18 7"/></svg>
+                    </div>
+                    <h3>Bilinçli Kullanım</h3>
+                    <p>Güvenli internet kullanımı</p>
+                </div>
+            </a>
+        </section>
+    
+        <div class="counter-display">
+            <p class="visitor-count-text">Toplam Ziyaret: <span id="visitor-count-span">Yükleniyor...</span></p>
+        </div>
+        <p class="visitor-count-text">kaç kez ziyaret edildiğini gösterir.</p>
+
+        <!-- index.html içerisindeki Son Test butonu/linki (Örn: Scenario kartı) -->
+    <a href="#" onclick="startTest('post')" class="scenario-card-link">
+            <div class="scenario-card final-test-card">
+                <div class="icon-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-8.66"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <h3>Son Testi Çöz</h3>
+                <p>Bilgilerinizi test edin ve sertifikanızı alın</p>
+            </div>
+        </a>
+    </div>
+
+    <script src="neon_lines.js"></script>
+    <script src="interactives.js"></script>
+
+    <script>
+    // 🔥🔥🔥 KRİTİK ADIM: GOOGLE FORM GÖMME (EMBED) LİNKLERİNİZİ BURAYA YAPIŞTIRIN!
+    
+    // Google Form'unuzu açın -> "Gönder" (Send) -> "<>" (Embed HTML) sekmesindeki src="" kısmını kopyalayın.
+
+    const PRE_TEST_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfeSQbovF4xUreMJXHepynB_2TZRWelHv_97DBRTm6WHtYk7Q/viewform"; 
+    const POST_TEST_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSePz6ODD-XbxzE770r783pmUfSH3J6aqVqz1a4tF_6jUz7SRg/viewform";
+    
+    // Örnek Gömme Linki Formatı: 
+    // const PRE_TEST_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfp_k7zT1hY8gWwzZ.../viewform?embedded=true";
+    
+    
+    /**
+     * Butonlarınızı tetikleyecek ana fonksiyon.
+     * @param {('pre'|'post')} testType - Hangi testin açılacağı (ön veya son).
+     */
+    window.startTest = function(testType) {
+        let url;
+        if (testType === 'pre') {
+            url = PRE_TEST_FORM_URL;
+        } else if (testType === 'post') {
+            url = POST_TEST_FORM_URL;
+        } else {
+            return;
+        }
+        
+        // Formu yeni pencerede/sekmede açmak için:
+        window.open(url, '_blank'); 
+        
+        // Aynı pencerede açmak için:
+        // window.location.href = url;
+    };
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script> 
+    
+    <script>
+        // 🚨 KONSOLDAN ALDIĞINIZ AYARLAR BURAYA GELMELİ
+        const firebaseConfig = {
+            apiKey: "AIzaSyDdkl1ZV3f2opyXwcNFbEZHRvWcSTgLLJ4",
+            authDomain: "cybersecurity-test-analytics.firebaseapp.com",
+            projectId: "cybersecurity-test-analytics", 
+            // ... diğer ayarlar
+        };
+        firebase.initializeApp(firebaseConfig);
+        
+        const db = firebase.firestore();
+        const STATS_DOC_REF = db.collection('meta').doc('visitor_count'); // Sizin sayacınız
+        const DEVICES_COLLECTION = db.collection('devices'); // Yeni benzersiz cihazlar koleksiyonu
+        const DEVICE_ID_KEY = 'unique_device_id_v2'; // LocalStorage Key
+
+        // Basit bir UUID oluşturma fonksiyonu
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const countSpan = document.getElementById('visitor-count-span');
+            if (!countSpan) return; 
+
+            let deviceId = localStorage.getItem(DEVICE_ID_KEY);
+            let isNewDevice = false;
+
+            if (!deviceId) {
+                // Eğer bu cihaz daha önce sayılmadıysa, yeni bir ID oluştur
+                deviceId = generateUUID();
+                localStorage.setItem(DEVICE_ID_KEY, deviceId);
+                isNewDevice = true;
+            }
+
+            try {
+                // A. Sayıyı Sadece Oku (Önce Güncel Sayıyı Göster)
+                const statsDoc = await STATS_DOC_REF.get();
+                let currentCount = statsDoc.data()?.count || 0;
+                countSpan.textContent = currentCount;
+
+                if (isNewDevice) {
+                    // B. Transaction ile Benzersizliği Kontrol Et ve Say
+                    await db.runTransaction(async (transaction) => {
+                        
+                        const deviceDoc = await transaction.get(DEVICES_COLLECTION.doc(deviceId));
+
+                        if (!deviceDoc.exists) {
+                            // Cihaz Firestore'da yoksa:
+                            // 1. Cihazı Kaydet
+                            transaction.set(DEVICES_COLLECTION.doc(deviceId), { 
+                                firstVisit: firebase.firestore.FieldValue.serverTimestamp() 
+                            });
+                            
+                            // 2. Sayacı 1 Artır (Atomic Increment)
+                            transaction.update(STATS_DOC_REF, {
+                                count: firebase.firestore.FieldValue.increment(1)
+                            });
+                            
+                            // Yeni sayıyı tekrar oku (ekranda anında güncellensin)
+                            const updatedStats = await transaction.get(STATS_DOC_REF);
+                            currentCount = updatedStats.data()?.count || 0;
+                            countSpan.textContent = currentCount;
+
+                        }
+                        // Eğer cihaz zaten varsa, sayaç artmaz.
+
+                        return currentCount;
+                    });
+                }
+            } catch (error) {
+                // Hata yakalama
+                console.error("Sayaç işlemi hatası:", error);
+                countSpan.textContent = "Hata";
+            }
+        });
+    </script>
+</body>

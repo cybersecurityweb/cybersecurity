@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerçeklik ve Kritik Düşünme</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-background">
+    <canvas id="neon-lines"></canvas>
+    <div class="container scenario-page">
+        <header class="page-header">
+            
+            <h1>Gerçeklik</h1>
+            <p>Çevrimiçi dolandırıcılık, sahte haberler ve aldatıcı içerikleri tanıma becerilerini geliştirin.</p>
+            
+            <div class="header-completion-section">
+                <a href="index.html" class="start-button">Ana Sayfaya Dön ve Devam Et</a>
+            </div>
+        </header>
+
+        <section class="scenario-content detail-content">
+            
+            <h2>Dijital Dünyada Şüpheci Olmak</h2>
+            <p>İnternet, bilgi kadar yanlış bilgi ve dolandırıcılık içerikleri de barındırır. Çocuklarımızın gördükleri, okudukları veya tıklandıkları şeylerin **gerçekliğini sorgulamaları** kritik bir beceridir.</p>
+
+            <div class="highlight-box privacy-settings">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.86 18.14a2 2 0 0 0 1.74 3.09h16.8a2 2 0 0 0 1.74-3.09L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
+                </div>
+                <h3>Adım 1: Kaynak Kontrolü</h3>
+                <p>Bir haberin veya bilginin kaynağını (URL, yazar) kontrol etmeyi öğretin. **Çok iyi veya çok kötü** görünen içeriklere şüpheyle yaklaşmaları gerektiğini vurgulayın. Başka kaynaklardan teyit etmeden inanmamaları gerektiğini anlatın.</p>
+            </div>
+            
+            <div class="highlight-box private-info">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00BFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <h3>Adım 2: Kimlik Avı (Phishing)</h3>
+                <p>Acil şifre değişikliği isteyen, büyük ödül kazandığını söyleyen veya korkutucu bir dille bilgi talep eden e-posta ve mesajlara dikkat edin. Resmi kurumlar asla şifrenizi e-posta ile istemez!</p>
+            </div>
+
+            <div class="highlight-box communication">
+                <div class="box-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#32CD32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                </div>
+                <h3>Adım 3: Çevrimiçi Tanıdıklar</h3>
+                <p>İnternette tanıştıkları kişilerin gerçekten kim olduğunu sorgulamaları gerektiğini öğretin. Kişisel bilgi isteyen, çok hızlı samimi olan veya buluşma teklif eden profillere karşı asla taviz vermemeleri gerektiğini vurgulayın.</p>
+            </div>
+            <div id="phishing-simulator" class="interactive-module">
+                <h2><span class="highlight-text">🎣 Oltalama (Phishing) Simülatörü</span></h2>
+                <p>Aşağıdaki adımları takip ederek, bankadan gelmiş gibi görünen bu e-postanın bir tuzak olup olmadığını anlamaya çalışın.</p>
+
+                <div id="phishing-stage-container">
+                    <p style="text-align: center; color: #ccc;">Simülatör yükleniyor...</p>
+                </div>
+                <div class="footer-navigation">
+                    <a href="index.html" class="back-to-home-button">
+                        ← Ana Sayfaya Dön
+                    </a>
+                </div>
+                <button id="reset-phishing" class="start-button" style="display: none; margin-top: 20px;">Başa Dön</button>
+            </div>
+        </section>
+
+    </div>
+    <script src="neon_lines.js"></script>
+    <script src="client.js"></script>
+    <script src="interactives.js"></script>
+</body>
+</html>
