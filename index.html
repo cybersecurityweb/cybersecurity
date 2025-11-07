@@ -142,11 +142,10 @@
 </script>
 
 
-    <!-- Firebase V9 Modül Yöntemi -->
-<script type="module">
+  <script type="module">
     // Firebase Modüllerini Import Et
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, runTransaction, increment, setLogLevel } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, runTransaction, increment, setLogLevel, collection, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
     // Hata ayıklama (Debug) seviyesini açar.
@@ -163,80 +162,142 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     
+    // Sayaç verisinin bulunduğu Firestore yolu
     const STATS_DOC_REF = doc(db, 'meta', 'visitor_count'); 
-    const DEVICE_ID_KEY = 'unique_device_id_v5'; 
+    // Ziyaret eden IP adreslerini tutan koleksiyon
+    const VISITED_IPS_COLLECTION = collection(db, 'visited_ips');
 
-    function generateUUID() {
-        return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+    /**
+     * Harici bir API kullanarak kullanıcının genel IP adresini alır.
+     * @returns {Promise<string|null>} Kullanıcının IP adresi veya hata durumunda null.
+     */
+    async function getClientIpAddress(statusMessageElement) {
+        if(statusMessageElement) statusMessageElement.textContent = "IP adresi alınıyor...";
+        try {
+            // Harici bir servis aracılığıyla IP adresini alıyoruz. 
+            // Bu, tarayıcı güvenliği nedeniyle doğrudan mümkün olan tek yoldur.
+            const response = await fetch('https://api64.ipify.org?format=json');
+            const data = await response.json();
+            
+            if(statusMessageElement) statusMessageElement.textContent = "IP adresi alındı.";
+            return data.ip;
+
+        } catch (error) {
+            console.error("IP adresi alma hatası:", error);
+            if(statusMessageElement) statusMessageElement.textContent = `🚨 HATA: IP adresi alınamadı. ${error.message}`;
+            return null;
+        }
     }
 
-    async function incrementCounter(db, docRef, statusMessage) {
+
+    /**
+     * IP adresine göre tekil ziyareti kontrol eder ve sayacı artırır.
+     * @param {string} ipAddress - Ziyaretçinin IP adresi.
+     * @param {HTMLElement} statusMessageElement - Durum mesajlarının gösterileceği element.
+     */
+    async function handleUniqueVisit(ipAddress, statusMessageElement) {
+        
+        // Firestore doküman ID'leri için IP adreslerini noktalarından arındır.
+        const ipDocId = ipAddress.replace(/\./g, '_'); 
+        const ipDocRef = doc(VISITED_IPS_COLLECTION, ipDocId);
+
         try {
+            // 1. IP'nin daha önce ziyaret edip etmediğini kontrol et
+            if(statusMessageElement) statusMessageElement.textContent = `IP (${ipAddress}) kontrol ediliyor...`;
+            const ipDoc = await getDoc(ipDocRef);
+
+            if (ipDoc.exists()) {
+                // IP ZATEN KAYITLI: Sayacı artırma.
+                console.log("Bu IP zaten kayıtlı. Sayaç artırılmayacak.");
+                if(statusMessageElement) statusMessageElement.textContent = "Bu IP zaten ziyaret etmiş. Sayaç artırılmadı.";
+                return; 
+            }
+
+            // 2. IP YENİ: Hem sayacı artır hem de IP'yi kaydet
+            if(statusMessageElement) statusMessageElement.textContent = "Yeni IP! Sayaç artırılıyor ve IP kaydediliyor...";
+            
             await runTransaction(db, async (transaction) => {
-                const currentStatsDoc = await transaction.get(docRef);
+                // A. Sayacı artır
+                const currentStatsDoc = await transaction.get(STATS_DOC_REF);
                 
                 if (!currentStatsDoc.exists) {
-                    transaction.set(docRef, { count: 1 });
+                    // Doküman yoksa, 1 olarak oluştur
+                    transaction.set(STATS_DOC_REF, { count: 1, last_ip: ipAddress });
                 } else {
-                    transaction.update(docRef, {
-                        count: increment(1)
+                    // Varsa, sayacı 1 artır
+                    transaction.update(STATS_DOC_REF, {
+                        count: increment(1),
+                        last_ip: ipAddress 
                     });
                 }
+
+                // B. Yeni IP'yi kaydet
+                transaction.set(ipDocRef, {
+                    ip: ipAddress,
+                    first_visit: new Date().toISOString()
+                });
             });
+
+            console.log("Yeni IP: Sayaç başarıyla artırıldı ve IP kaydedildi.");
+            if(statusMessageElement) statusMessageElement.textContent = `Yeni ziyaretçi algılandı! Sayaç artırıldı.`;
+
         } catch (e) {
-            console.error("Sayaç artırma (Transaction) işlemi başarısız oldu: ", e);
+            console.error("IP Bazlı Sayaç İşlemi Başarısız oldu: ", e);
             if (e.code === 'permission-denied') {
-                 if(statusMessage) statusMessage.textContent += " (Yazma İzni Reddedildi!)";
+                 if(statusMessageElement) statusMessageElement.textContent = "🚨 HATA: Firebase İzni Reddedildi (Kuralları Kontrol Et)!";
+            } else {
+                 if(statusMessageElement) statusMessageElement.textContent = `🚨 HATA: Sayaç artırılamadı: ${e.message}`;
             }
         }
     }
 
+
     document.addEventListener('DOMContentLoaded', async () => {
-        // HATA MESAJI BURADAN KAYNAKLANIYOR! LÜTFEN ID'LERİ KONTROL EDİN!
         const countSpan = document.getElementById('ziyaretciSayisi'); 
         const statusMessage = document.getElementById('yukleniyorText'); 
         
+        // HTML ID kontrolü (Önceki hatadan dolayı)
         if (!countSpan || !statusMessage) {
-             console.error("HATA: HTML'de sayaç ID'leri ('ziyaretciSayisi' veya 'yukleniyorText') bulunamadı! Lütfen ID'lerin doğru olduğundan emin olun.");
-             if (countSpan) countSpan.textContent = "ID HATASI";
-             if (statusMessage) statusMessage.textContent = "HTML ID'lerini kontrol edin.";
+             console.error("HATA: HTML'de sayaç ID'leri ('ziyaretciSayisi' veya 'yukleniyorText') bulunamadı!");
              return; 
         }
 
         try {
             statusMessage.textContent = "Bağlantı kuruluyor...";
+            
+            // Anonim oturum açma (Firestore okuma/yazma izni için zorunlu)
             await signInAnonymously(auth);
             
-            let deviceId = localStorage.getItem(DEVICE_ID_KEY);
-            let isNewDevice = false;
+            // 1. IP Adresini Al
+            const clientIp = await getClientIpAddress(statusMessage);
             
-            if (!deviceId) {
-                deviceId = generateUUID();
-                localStorage.setItem(DEVICE_ID_KEY, deviceId);
-                isNewDevice = true;
+            if (clientIp) {
+                // 2. IP Bazlı Tekil Ziyaret İşlemini Başlat
+                await handleUniqueVisit(clientIp, statusMessage);
+            } else {
+                // IP alınamadıysa, işlem durur.
+                return;
             }
 
+
+            // 3. Sayaç değerini anlık olarak dinlemeye başla
             onSnapshot(STATS_DOC_REF, 
                 // Başarılı Okuma Durumu
-                async (docSnapshot) => {
+                (docSnapshot) => {
                     const data = docSnapshot.data();
                     const currentCount = data?.count || 0;
                     
-                    countSpan.textContent = currentCount; // Sayıyı doğrudan yazar
-
-                    if (isNewDevice) {
-                       statusMessage.textContent = `Toplam Ziyaret: ${currentCount} (Yeni Ziyaretçi)`;
-                       await incrementCounter(db, STATS_DOC_REF, statusMessage);
-                       isNewDevice = false; 
-                    } else {
-                       statusMessage.textContent = `Toplam Ziyaret: ${currentCount} (Tekrar Ziyaret)`;
-                    }
+                    countSpan.textContent = currentCount; 
+                    // Eğer IP alınamasa bile, sayaç değerini göster
+                    if(statusMessage.textContent.startsWith("🚨 HATA:")) return;
+                    statusMessage.textContent = `Toplam Tekil Ziyaret: ${currentCount} (Anlık Veri)`;
                 }, 
                 // Hata Durumu (Güvenlik Kuralı Hatası)
                 (error) => {
                     console.error("FIREBASE HATA: Sayaç Dinleme Başarısız:", error);
                     if (error.code === 'permission-denied') {
-                         statusMessage.textContent = "🚨 KESİN HATA: İzin Reddedildi! Firebase Güvenlik Kurallarını Kontrol Et!";
+                         statusMessage.textContent = "🚨 KESİN HATA: Okuma İzni Reddedildi! Güvenlik Kurallarını Kontrol Et!";
                          countSpan.textContent = "KURAL HATASI";
                     } else {
                          statusMessage.textContent = `🚨 HATA: Sayaç okunamadı: ${error.message}`;
