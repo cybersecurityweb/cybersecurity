@@ -81,10 +81,16 @@
             </a>
         </section>
     
-        <div class="counter-display">
-            <p class="visitor-count-text">Toplam Ziyaret: <span id="visitor-count-span">Yükleniyor...</span></p>
-        </div>
-        <p class="visitor-count-text">kaç kez ziyaret edildiğini gösterir.</p>
+       <!-- KENDİ STİLİNİZDEKİ DİV İÇİNE YERLEŞTİRİN -->
+<div class="sayaç-kutusu">
+    <!-- Sayıyı gösterecek olan yer: -->
+    <h3 id="ziyaretciSayisi">0</h3> 
+    
+    <!-- Yükleniyor veya Durum mesajını gösterecek olan yer: -->
+    <p id="yukleniyorText">Toplam Ziyaret: Yükleniyor...</p>
+    
+    <p>kaç kez ziyaret edildiğini gösterir.</p>
+</div>
 
         <!-- index.html içerisindeki Son Test butonu/linki (Örn: Scenario kartı) -->
     <a href="#" onclick="startTest('post')" class="scenario-card-link">
@@ -135,86 +141,116 @@
     };
 </script>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script> 
-    
-    <script>
-        // 🚨 KONSOLDAN ALDIĞINIZ AYARLAR BURAYA GELMELİ
-        const firebaseConfig = {
-            apiKey: "AIzaSyDdkl1ZV3f2opyXwcNFbEZHRvWcSTgLLJ4",
-            authDomain: "cybersecurity-test-analytics.firebaseapp.com",
-            projectId: "cybersecurity-test-analytics", 
-            // ... diğer ayarlar
-        };
-        firebase.initializeApp(firebaseConfig);
-        
-        const db = firebase.firestore();
-        const STATS_DOC_REF = db.collection('meta').doc('visitor_count'); // Sizin sayacınız
-        const DEVICES_COLLECTION = db.collection('devices'); // Yeni benzersiz cihazlar koleksiyonu
-        const DEVICE_ID_KEY = 'unique_device_id_v2'; // LocalStorage Key
 
-        // Basit bir UUID oluşturma fonksiyonu
-        function generateUUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
+    <!-- Firebase V9 Modül Yöntemi -->
+<script type="module">
+    // Firebase Modüllerini Import Et
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, runTransaction, increment, setLogLevel } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+    // Hata ayıklama (Debug) seviyesini açar.
+    setLogLevel('debug');
+
+    // Sizin paylaştığınız Firebase Config bilgileri
+    const firebaseConfig = {
+        apiKey: "AIzaSyDdkl1ZV3f2opyXwcNFbEZHRvWcSTgLLJ4",
+        authDomain: "cybersecurity-test-analytics.firebaseapp.com",
+        projectId: "cybersecurity-test-analytics", 
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    
+    const STATS_DOC_REF = doc(db, 'meta', 'visitor_count'); 
+    const DEVICE_ID_KEY = 'unique_device_id_v5'; 
+
+    function generateUUID() {
+        return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    }
+
+    async function incrementCounter(db, docRef, statusMessage) {
+        try {
+            await runTransaction(db, async (transaction) => {
+                const currentStatsDoc = await transaction.get(docRef);
+                
+                if (!currentStatsDoc.exists) {
+                    transaction.set(docRef, { count: 1 });
+                } else {
+                    transaction.update(docRef, {
+                        count: increment(1)
+                    });
+                }
             });
+        } catch (e) {
+            console.error("Sayaç artırma (Transaction) işlemi başarısız oldu: ", e);
+            if (e.code === 'permission-denied') {
+                 if(statusMessage) statusMessage.textContent += " (Yazma İzni Reddedildi!)";
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        // HATA MESAJI BURADAN KAYNAKLANIYOR! LÜTFEN ID'LERİ KONTROL EDİN!
+        const countSpan = document.getElementById('ziyaretciSayisi'); 
+        const statusMessage = document.getElementById('yukleniyorText'); 
+        
+        if (!countSpan || !statusMessage) {
+             console.error("HATA: HTML'de sayaç ID'leri ('ziyaretciSayisi' veya 'yukleniyorText') bulunamadı! Lütfen ID'lerin doğru olduğundan emin olun.");
+             if (countSpan) countSpan.textContent = "ID HATASI";
+             if (statusMessage) statusMessage.textContent = "HTML ID'lerini kontrol edin.";
+             return; 
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const countSpan = document.getElementById('visitor-count-span');
-            if (!countSpan) return; 
-
+        try {
+            statusMessage.textContent = "Bağlantı kuruluyor...";
+            await signInAnonymously(auth);
+            
             let deviceId = localStorage.getItem(DEVICE_ID_KEY);
             let isNewDevice = false;
-
+            
             if (!deviceId) {
-                // Eğer bu cihaz daha önce sayılmadıysa, yeni bir ID oluştur
                 deviceId = generateUUID();
                 localStorage.setItem(DEVICE_ID_KEY, deviceId);
                 isNewDevice = true;
             }
 
-            try {
-                // A. Sayıyı Sadece Oku (Önce Güncel Sayıyı Göster)
-                const statsDoc = await STATS_DOC_REF.get();
-                let currentCount = statsDoc.data()?.count || 0;
-                countSpan.textContent = currentCount;
+            onSnapshot(STATS_DOC_REF, 
+                // Başarılı Okuma Durumu
+                async (docSnapshot) => {
+                    const data = docSnapshot.data();
+                    const currentCount = data?.count || 0;
+                    
+                    countSpan.textContent = currentCount; // Sayıyı doğrudan yazar
 
-                if (isNewDevice) {
-                    // B. Transaction ile Benzersizliği Kontrol Et ve Say
-                    await db.runTransaction(async (transaction) => {
-                        
-                        const deviceDoc = await transaction.get(DEVICES_COLLECTION.doc(deviceId));
-
-                        if (!deviceDoc.exists) {
-                            // Cihaz Firestore'da yoksa:
-                            // 1. Cihazı Kaydet
-                            transaction.set(DEVICES_COLLECTION.doc(deviceId), { 
-                                firstVisit: firebase.firestore.FieldValue.serverTimestamp() 
-                            });
-                            
-                            // 2. Sayacı 1 Artır (Atomic Increment)
-                            transaction.update(STATS_DOC_REF, {
-                                count: firebase.firestore.FieldValue.increment(1)
-                            });
-                            
-                            // Yeni sayıyı tekrar oku (ekranda anında güncellensin)
-                            const updatedStats = await transaction.get(STATS_DOC_REF);
-                            currentCount = updatedStats.data()?.count || 0;
-                            countSpan.textContent = currentCount;
-
-                        }
-                        // Eğer cihaz zaten varsa, sayaç artmaz.
-
-                        return currentCount;
-                    });
+                    if (isNewDevice) {
+                       statusMessage.textContent = `Toplam Ziyaret: ${currentCount} (Yeni Ziyaretçi)`;
+                       await incrementCounter(db, STATS_DOC_REF, statusMessage);
+                       isNewDevice = false; 
+                    } else {
+                       statusMessage.textContent = `Toplam Ziyaret: ${currentCount} (Tekrar Ziyaret)`;
+                    }
+                }, 
+                // Hata Durumu (Güvenlik Kuralı Hatası)
+                (error) => {
+                    console.error("FIREBASE HATA: Sayaç Dinleme Başarısız:", error);
+                    if (error.code === 'permission-denied') {
+                         statusMessage.textContent = "🚨 KESİN HATA: İzin Reddedildi! Firebase Güvenlik Kurallarını Kontrol Et!";
+                         countSpan.textContent = "KURAL HATASI";
+                    } else {
+                         statusMessage.textContent = `🚨 HATA: Sayaç okunamadı: ${error.message}`;
+                         countSpan.textContent = "HATA";
+                    }
                 }
-            } catch (error) {
-                // Hata yakalama
-                console.error("Sayaç işlemi hatası:", error);
-                countSpan.textContent = "Hata";
-            }
-        });
-    </script>
+            );
+            
+        } catch (error) {
+            console.error("Firebase Başlatma/Oturum Hatası:", error);
+            statusMessage.textContent = `🚨 BAĞLANTI HATASI: ${error.message}`;
+            countSpan.textContent = "HATA";
+        }
+    });
+</script>
 </body>
+<html>
